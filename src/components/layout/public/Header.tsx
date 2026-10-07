@@ -1,6 +1,47 @@
+"use client";
+import { Button } from "@/components/ui/button";
+import { toast } from "@/components/ui/toast";
+import { useGetMe, useLogOut } from "@/hook";
+import { useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
 
 const Header = () => {
+  const queryClient = useQueryClient();
+  const routes = [
+    { name: "Home", url: "/" },
+    { name: "Problem", url: "/problems" },
+    { name: "Assessment", url: "/assessment" },
+    { name: "About us", url: "/about-us" },
+    { name: "Contract", url: "/contract" },
+  ];
+
+  const { data, isLoading } = useGetMe();
+  const { mutate: logout } = useLogOut();
+  console.log("data", data?.data);
+  const user = data?.data
+
+  const handleLogout = () => {
+    logout(undefined, {
+      onSuccess: (res) => {
+        console.log(res);
+        toast.add({
+          title: "Tata",
+          description: "Logout successfully",
+          type: "success",
+        });
+        queryClient.removeQueries({ queryKey: ["user"] });
+      },
+      onError: (err) => {
+        console.log(err);
+        toast.add({
+          title: "Logout error",
+          description: err.message || "Someting went wrong.Please try again",
+          type: "error",
+        });
+      },
+    });
+  };
+
   return (
     <header className="border-b bg-background">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
@@ -11,7 +52,12 @@ const Header = () => {
 
         {/* Navigation */}
         <nav className="hidden items-center gap-6 md:flex">
-          <Link
+          {routes.map((route) => (
+            <Link href={route.url} key={route.url}>
+              {route.name}
+            </Link>
+          ))}
+          {/* <Link
             href="/"
             className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
           >
@@ -37,24 +83,25 @@ const Header = () => {
             className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
           >
             About
-          </Link>
+          </Link> */}
         </nav>
 
         {/* Auth */}
-        <div className="flex items-center gap-3">
-          <Link
-            href="/login"
-            className="text-sm font-medium hover:text-primary"
-          >
-            Login
-          </Link>
-
-          <Link
-            href="/register"
-            className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
-          >
-            Register
-          </Link>
+        <div>
+          {!isLoading && !user && (
+            <Button
+              variant="outline"
+              render={<Link href="/login">Login</Link>}
+              nativeButton={false}
+            >
+              Login
+            </Button>
+          )}
+          {!isLoading && data && (
+            <Button onClick={handleLogout} variant="destructive">
+              Logout
+            </Button>
+          )}
         </div>
       </div>
     </header>
