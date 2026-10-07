@@ -29,7 +29,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { REGEXP_ONLY_DIGITS } from "input-otp";
 
-import { useVerifyEmail } from "@/hook";
+import { useResendVerificationOtp, useVerifyEmail } from "@/hook";
 import { toast } from "@/components/ui/toast";
 
 const RESEND_COOLDOWN = 120;
@@ -45,7 +45,9 @@ const VerifyAccountForm = () => {
   const [resendTimer, setResendTimer] = useState(RESEND_COOLDOWN);
 
   const { mutate: verifyEmail, isPending } = useVerifyEmail();
-   
+  const { mutate: resendOtp, isPending: isResending } =
+    useResendVerificationOtp();
+
   useEffect(() => {
     if (!email) {
       router.push("/register");
@@ -112,6 +114,32 @@ const VerifyAccountForm = () => {
     return null;
   }
 
+  const handleResendOtp = () => {
+    resendOtp(
+      { email },
+      {
+        onSuccess: () => {
+          setOtp("");
+          setIsInvalid(false);
+          setResendTimer(120);
+
+          toast.add({
+            title: "OTP Sent",
+            description: "A new verification code has been sent to your email.",
+            type: "success",
+          });
+        },
+        onError: (err) => {
+          toast.add({
+            title: "Resend failed",
+            description: err.message || "Failed to resend verification code.",
+            type: "error",
+          });
+        },
+      },
+    );
+  };
+
   return (
     <Card className="w-full max-w-md">
       <CardHeader>
@@ -141,9 +169,11 @@ const VerifyAccountForm = () => {
               maxLength={6}
               value={otp}
               pattern={REGEXP_ONLY_DIGITS}
-              autoComplete="one-time-code"
+              autoComplete="off"
               onChange={(value) => {
-                setOtp(value);
+                const onlyDigits = value.replace(/\D/g, "").slice(0, 6);
+
+                setOtp(onlyDigits);
 
                 if (isInvalid) {
                   setIsInvalid(false);
@@ -185,8 +215,13 @@ const VerifyAccountForm = () => {
       </CardContent>
 
       <CardFooter className="flex justify-between">
-        <Button type="button" variant="outline" disabled={resendTimer > 0}>
-          Resend
+        <Button
+          type="button"
+          variant="outline"
+          onClick={handleResendOtp}
+          disabled={resendTimer > 0}
+        >
+          {isResending ? "Sending..." : "Resend"}
         </Button>
 
         <Button type="submit" form="form-otp" disabled={isPending}>

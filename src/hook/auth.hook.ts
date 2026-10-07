@@ -1,4 +1,15 @@
-import { getMeUser, googleLoginUser, loginUser, registerUser, userLogOut, verifyEmailUser } from "@/api";
+import {
+  forgotPasswordUser,
+  getMeUser,
+  googleLoginUser,
+  loginUser,
+  registerUser,
+  resendForgotPasswordOtp,
+  resendVerificationOtp,
+  resetPasswordUser,
+  userLogOut,
+  verifyEmailUser,
+} from "@/api";
 import { useMutation, useQuery } from "@tanstack/react-query";
 
 export const useRegister = () => {
@@ -10,6 +21,12 @@ export const useRegister = () => {
 export const useVerifyEmail = () => {
   return useMutation({
     mutationFn: verifyEmailUser,
+  });
+};
+
+export const useResendVerificationOtp = () => {
+  return useMutation({
+    mutationFn: resendVerificationOtp,
   });
 };
 
@@ -39,3 +56,27 @@ export const useLogOut = () => {
     mutationFn: userLogOut,
   });
 };
+
+export const useForgotPassword = () => {
+  return useMutation({
+    mutationFn: forgotPasswordUser,
+  });
+};
+
+
+export const useResetPassword = () => {
+  return useMutation({
+    mutationFn: resetPasswordUser,
+  });
+};
+
+// useResendForgotPasswordOtp.ts
+
+
+export const useResendForgotPasswordOtp = () => {
+  return useMutation({
+    mutationFn: resendForgotPasswordOtp,
+  });
+};
+
+

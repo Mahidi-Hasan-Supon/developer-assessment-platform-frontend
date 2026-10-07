@@ -18,9 +18,13 @@ export interface LoginResponse {
     refreshToken: string;
   };
 }
+export interface ResendVerificationOtpPayload {
+  email: string;
+}
+
 
 export interface GoogleLoginPayload {
-  idToken: string;
+  credential: string;
 }
 
 export interface RegisterPayload {
@@ -33,3 +37,24 @@ export interface VerifyEmailPayload {
   email: string;
   otp: string;
 }
+
+
+export interface ForgotPasswordPayload {
+  email: string;
+}
+
+export interface ResetPasswordPayload {
+  email: string;
+  otp: string;
+  newPassword: string;
+}
+
+export interface ResendForgotPasswordOtpPayload {
+  email: string;
+}
+
+
+
+
+
+

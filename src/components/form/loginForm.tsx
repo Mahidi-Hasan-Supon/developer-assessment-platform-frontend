@@ -7,11 +7,15 @@ import { useState } from "react";
 import { Eye, EyeClosed } from "lucide-react";
 import { useRouter } from "next/navigation";
 
-
-
 import Link from "next/link";
 import { useLogin } from "@/hook";
-import { Field, FieldError, FieldGroup, FieldLabel, FieldSeparator } from "../ui/field";
+import {
+  Field,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+  FieldSeparator,
+} from "../ui/field";
 import { toast } from "../ui/toast";
 import { Spinner } from "../ui/spinner";
 import { loginSchema } from "@/validation";
@@ -132,6 +136,14 @@ export default function LoginForm() {
                       )}
                     </button>
                   </div>
+                  <div className="flex justify-end">
+                    <Link
+                      href="/login/forgot-password"
+                      className="text-sm text-primary hover:underline"
+                    >
+                      Forgot password?
+                    </Link>
+                  </div>
                   {isInvalid && <FieldError errors={field.state.meta.errors} />}
                 </Field>
               );
@@ -153,7 +165,7 @@ export default function LoginForm() {
       <FieldSeparator>Or</FieldSeparator>
 
       {/* <GoogleLoginO /> */}
-      <GoogleLoginOAuth/>
+      <GoogleLoginOAuth />
 
       <div>
         Don't have a account? Plz{" "}

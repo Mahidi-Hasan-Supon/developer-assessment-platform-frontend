@@ -20,7 +20,7 @@ export default function GoogleLoginOAuth() {
     }
 
     googleLogin(
-      { idToken },
+      { credential: idToken },
       {
         onSuccess: () => {
           toast.add({

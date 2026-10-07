@@ -1,5 +1,14 @@
 import apiClient from "@/lib/apiClient";
-import { GoogleLoginPayload, LoginPayload, RegisterPayload, VerifyEmailPayload } from "@/types";
+import {
+  ForgotPasswordPayload,
+  GoogleLoginPayload,
+  LoginPayload,
+  RegisterPayload,
+  ResendForgotPasswordOtpPayload,
+  ResendVerificationOtpPayload,
+  ResetPasswordPayload,
+  VerifyEmailPayload,
+} from "@/types";
 
 export const registerUser = async (payload: RegisterPayload) => {
   return apiClient("/auth/register", {
@@ -10,6 +19,16 @@ export const registerUser = async (payload: RegisterPayload) => {
 
 export const verifyEmailUser = async (payload: VerifyEmailPayload) => {
   return apiClient("/auth/verify-email", {
+    method: "POST",
+    body: payload,
+  });
+};
+
+
+export const resendVerificationOtp = async (
+  payload: ResendVerificationOtpPayload,
+) => {
+  return apiClient("/auth/resend-verification-otp", {
     method: "POST",
     body: payload,
   });
@@ -44,8 +63,44 @@ export const googleLoginUser = async (payload: GoogleLoginPayload) => {
     body: payload,
   });
 };
+
 export const userLogOut = async () => {
   return apiClient("/auth/logOut", {
     method: "POST",
   });
 };
+
+
+
+export const forgotPasswordUser = async (
+  payload: ForgotPasswordPayload,
+) => {
+  return apiClient("/auth/forget-password", {
+    method: "POST",
+    body: payload,
+  });
+};
+
+export const resetPasswordUser = async (
+  payload: ResetPasswordPayload,
+) => {
+  return apiClient("/auth/reset-password", {
+    method: "POST",
+    body: payload,
+  });
+};
+
+// auth.api.ts
+
+
+
+export const resendForgotPasswordOtp = async (
+  payload: ResendForgotPasswordOtpPayload,
+) => {
+  return apiClient("/auth/resend-forgot-password-otp", {
+    method: "POST",
+    body: payload,
+  });
+};
+
+
