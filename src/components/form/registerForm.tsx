@@ -72,7 +72,7 @@ const RegisterForm = () => {
             email: registrationData.email,
           });
 
-          router.push(`/verify-email?${params.toString()}`);
+          router.push(`/register/verify-account?${params.toString()}`);
         },
 
         onError: (err) => {

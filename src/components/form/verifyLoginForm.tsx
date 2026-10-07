@@ -1,100 +1,200 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useForm } from "@tanstack/react-form";
 
-import { Input } from "@/components/ui/input";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+
+import {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSeparator,
+  InputOTPSlot,
+} from "@/components/ui/input-otp";
+
+import {
+  Field,
+  FieldDescription,
+  FieldError,
+  FieldLabel,
+} from "@/components/ui/field";
+
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
+import { REGEXP_ONLY_DIGITS } from "input-otp";
 
 import { useVerifyEmail } from "@/hook";
-import { verifyEmailSchema } from "@/validation/auth.validation";
+import { toast } from "@/components/ui/toast";
 
-const VerifyEmailPage = () => {
+const RESEND_COOLDOWN = 120;
+
+const VerifyAccountForm = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const email = searchParams.get("email") ?? "";
+  const email = searchParams.get("email") || "";
+
+  const [otp, setOtp] = useState("");
+  const [isInvalid, setIsInvalid] = useState(false);
+  const [resendTimer, setResendTimer] = useState(RESEND_COOLDOWN);
 
   const { mutate: verifyEmail, isPending } = useVerifyEmail();
+   
+  useEffect(() => {
+    if (!email) {
+      router.push("/register");
+    }
+  }, [email, router]);
 
-  const form = useForm({
-    defaultValues: {
-      email,
-      otp: "",
-    },
+  useEffect(() => {
+    if (resendTimer <= 0) return;
 
-    validators: {
-      onSubmit: verifyEmailSchema,
-    },
+    const timer = setInterval(() => {
+      setResendTimer((prev) => prev - 1);
+    }, 1000);
 
-    onSubmit: ({ value }) => {
-      verifyEmail(value, {
-        onSuccess: () => {
+    return () => clearInterval(timer);
+  }, [resendTimer]);
+
+  const handleSubmit = () => {
+    if (otp.length !== 6) {
+      setIsInvalid(true);
+      return;
+    }
+
+    verifyEmail(
+      {
+        email,
+        otp,
+      },
+      {
+        onSuccess: (res) => {
+          if (!res.success) {
+            toast.add({
+              title: "Verification failed",
+              description: "Something went wrong. Please try again.",
+              type: "error",
+            });
+
+            return;
+          }
+
+          toast.add({
+            title: "Verification Successful",
+            description: "Your account has been verified successfully.",
+            type: "success",
+          });
+
           router.push("/");
         },
-      });
-    },
-  });
+
+        onError: (err) => {
+          setIsInvalid(true);
+
+          toast.add({
+            title: "Verification failed",
+            description:
+              err.message || "Invalid or expired OTP. Please try again.",
+            type: "error",
+          });
+        },
+      },
+    );
+  };
+
+  if (!email) {
+    return null;
+  }
 
   return (
-    <main className="flex min-h-screen items-center justify-center px-6">
-      <div className="w-full max-w-md space-y-6">
-        <div>
-          <h1 className="text-2xl font-bold">Verify your email</h1>
+    <Card className="w-full max-w-md">
+      <CardHeader>
+        <CardTitle>Verify your account</CardTitle>
 
-          <p className="text-muted-foreground">
-            We sent a 6-digit verification code to your email.
-          </p>
-        </div>
+        <CardDescription>
+          Enter the 6-digit OTP sent to{" "}
+          <span className="font-medium text-foreground">{email}</span>
+        </CardDescription>
+      </CardHeader>
 
+      <CardContent>
         <form
+          id="form-otp"
           onSubmit={(e) => {
             e.preventDefault();
-            form.handleSubmit();
+            e.stopPropagation();
+            handleSubmit();
           }}
-          className="space-y-5"
         >
-          <form.Field name="email">
-            {(field) => (
-              <div className="space-y-2">
-                <Label>Email</Label>
+          <Field data-invalid={isInvalid}>
+            <FieldLabel htmlFor="otp">Verification Code</FieldLabel>
 
-                <Input value={field.state.value} disabled type="email" />
-              </div>
+            <InputOTP
+              id="otp"
+              name="otp"
+              maxLength={6}
+              value={otp}
+              pattern={REGEXP_ONLY_DIGITS}
+              autoComplete="one-time-code"
+              onChange={(value) => {
+                setOtp(value);
+
+                if (isInvalid) {
+                  setIsInvalid(false);
+                }
+              }}
+            >
+              <InputOTPGroup>
+                <InputOTPSlot index={0} />
+                <InputOTPSlot index={1} />
+                <InputOTPSlot index={2} />
+              </InputOTPGroup>
+
+              <InputOTPSeparator />
+
+              <InputOTPGroup>
+                <InputOTPSlot index={3} />
+                <InputOTPSlot index={4} />
+                <InputOTPSlot index={5} />
+              </InputOTPGroup>
+            </InputOTP>
+
+            {isInvalid && (
+              <FieldError
+                errors={[
+                  {
+                    message: "Invalid or expired verification code.",
+                  },
+                ]}
+              />
             )}
-          </form.Field>
 
-          <form.Field name="otp">
-            {(field) => (
-              <div className="space-y-2">
-                <Label htmlFor={field.name}>OTP</Label>
-
-                <Input
-                  id={field.name}
-                  inputMode="numeric"
-                  maxLength={6}
-                  placeholder="Enter 6-digit OTP"
-                  value={field.state.value}
-                  onChange={(e) => field.handleChange(e.target.value)}
-                />
-
-                {field.state.meta.errors.length > 0 && (
-                  <p className="text-sm text-destructive">
-                    {field.state.meta.errors[0]?.message}
-                  </p>
-                )}
-              </div>
-            )}
-          </form.Field>
-
-          <Button type="submit" className="w-full" disabled={isPending}>
-            {isPending ? "Verifying..." : "Verify email"}
-          </Button>
+            <FieldDescription>
+              {resendTimer > 0
+                ? `Resend code in ${resendTimer}s`
+                : "You can request a new code"}
+            </FieldDescription>
+          </Field>
         </form>
-      </div>
-    </main>
+      </CardContent>
+
+      <CardFooter className="flex justify-between">
+        <Button type="button" variant="outline" disabled={resendTimer > 0}>
+          Resend
+        </Button>
+
+        <Button type="submit" form="form-otp" disabled={isPending}>
+          {isPending ? "Verifying..." : "Verify Account"}
+        </Button>
+      </CardFooter>
+    </Card>
   );
 };
 
-export default VerifyEmailPage;
+export default VerifyAccountForm;

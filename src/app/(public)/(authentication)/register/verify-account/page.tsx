@@ -1,11 +1,12 @@
-import React from 'react';
+import VerifyEmailPage from "@/components/form/verifyLoginForm";
 
-const VerifyPage = () => {
-    return (
-        <div>
-            verify
-        </div>
-    );
+const VerifyAccountPage = () => {
+  return (
+    <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center px-4">
+      <VerifyEmailPage />
+    </div>
+  );
 };
 
-export default VerifyPage;
+export default VerifyAccountPage;
+

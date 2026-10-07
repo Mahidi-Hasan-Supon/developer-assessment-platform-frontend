@@ -23,7 +23,6 @@ export const useGetMe = () => {
   return useQuery({
     queryKey: ["user"],
     queryFn: getMeUser,
-
     retry: false,
     refetchOnWindowFocus: false,
   });
