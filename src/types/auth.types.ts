@@ -22,22 +22,23 @@ export interface ResendVerificationOtpPayload {
   email: string;
 }
 
-
 export interface GoogleLoginPayload {
   credential: string;
 }
+
+export type UserRole = "CANDIDATE" | "COMPANY" | "ADMIN";
 
 export interface RegisterPayload {
   name: string;
   email: string;
   password: string;
+  role: UserRole;
 }
 
 export interface VerifyEmailPayload {
   email: string;
   otp: string;
 }
-
 
 export interface ForgotPasswordPayload {
   email: string;
@@ -52,9 +53,3 @@ export interface ResetPasswordPayload {
 export interface ResendForgotPasswordOtpPayload {
   email: string;
 }
-
-
-
-
-
-

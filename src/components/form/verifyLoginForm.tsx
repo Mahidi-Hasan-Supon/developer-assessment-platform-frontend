@@ -93,7 +93,15 @@ const VerifyAccountForm = () => {
             type: "success",
           });
 
-          router.push("/");
+          // router.push("/");
+
+          const role = res.data?.user?.role;
+
+          if (role === "COMPANY") {
+            router.push("/company-application");
+          } else {
+            router.push("/");
+          }
         },
 
         onError: (err) => {

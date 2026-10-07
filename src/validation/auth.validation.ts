@@ -34,12 +34,13 @@ export const registerSchema = z
       ),
 
     confirmPassword: z.string().min(1, "Please confirm your password"),
+    role: z.enum(["CANDIDATE", "COMPANY"]),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords do not match",
     path: ["confirmPassword"],
   });
-   
+
 export const verifyEmailSchema = z.object({
   email: z.string().email("Enter a valid email"),
   otp: z
@@ -47,7 +48,6 @@ export const verifyEmailSchema = z.object({
     .length(6, "OTP must be 6 digits")
     .regex(/^\d+$/, "OTP must contain only numbers"),
 });
-
 
 export const forgotPasswordSchema = z.object({
   email: z

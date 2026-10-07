@@ -24,7 +24,11 @@ import { registerSchema } from "@/validation/auth.validation";
 import type { RegisterPayload } from "@/types";
 import GoogleLoginOAuth from "../modules/google-form/googleLogin";
 
-const RegisterForm = () => {
+interface RegisterFormProps {
+  role: "CANDIDATE" | "COMPANY";
+}
+
+const RegisterForm = ({ role }: RegisterFormProps) => {
   const router = useRouter();
 
   const [showPassword, setShowPassword] = useState(false);
@@ -37,6 +41,7 @@ const RegisterForm = () => {
       name: "",
       email: "",
       password: "",
+      role: "CANDIDATE" as "CANDIDATE" | "COMPANY",
       confirmPassword: "",
     },
 
@@ -49,6 +54,7 @@ const RegisterForm = () => {
         name: value.name,
         email: value.email,
         password: value.password,
+        role: value.role,
       };
 
       register(registrationData, {
@@ -248,6 +254,38 @@ const RegisterForm = () => {
                       )}
                     </button>
                   </div>
+
+                  {isInvalid && <FieldError errors={field.state.meta.errors} />}
+                </Field>
+              );
+            }}
+          </form.Field>
+          {/* role */}
+          <form.Field name="role">
+            {(field) => {
+              const isInvalid =
+                field.state.meta.isTouched && !field.state.meta.isValid;
+
+              return (
+                <Field data-invalid={isInvalid}>
+                  <FieldLabel htmlFor={field.name}>Account Type</FieldLabel>
+
+                  <select
+                    id={field.name}
+                    name={field.name}
+                    value={field.state.value}
+                    onBlur={field.handleBlur}
+                    onChange={(e) =>
+                      field.handleChange(
+                        e.target.value as "CANDIDATE" | "COMPANY",
+                      )
+                    }
+                    aria-invalid={isInvalid}
+                    className="border-input bg-background ring-offset-background focus:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-offset-2"
+                  >
+                    <option value="CANDIDATE">Candidate</option>
+                    <option value="COMPANY">Company</option>
+                  </select>
 
                   {isInvalid && <FieldError errors={field.state.meta.errors} />}
                 </Field>
