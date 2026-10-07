@@ -1,6 +1,5 @@
 import Logo from "@/asserts/svg/logo";
 import CompanyApplicationForm from "@/components/form/companyApplicationForm";
-import ForgotPasswordForm from "@/components/form/forgotPasswordForm";
 import Link from "next/link";
 
 export default function CompanyApplication() {

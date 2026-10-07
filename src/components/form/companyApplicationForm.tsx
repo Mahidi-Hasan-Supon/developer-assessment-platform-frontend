@@ -74,7 +74,6 @@ export default function CompanyApplicationForm() {
         {/* Company Name */}
         <form.Field name="companyName">
           {(field) => {
-            // এরর ট্র্যাকিং লজিক ফিক্স করা হয়েছে
             const hasError =
               field.state.meta.errors && field.state.meta.errors.length > 0;
             return (

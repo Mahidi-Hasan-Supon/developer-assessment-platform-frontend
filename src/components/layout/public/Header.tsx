@@ -18,7 +18,7 @@ const Header = () => {
   const { data, isLoading } = useGetMe();
   const { mutate: logout } = useLogOut();
   console.log("data", data?.data);
-  const user = data?.data
+  const user = data?.data;
 
   const handleLogout = () => {
     logout(undefined, {
@@ -35,7 +35,7 @@ const Header = () => {
         console.log(err);
         toast.add({
           title: "Logout error",
-          description: err.message || "Someting went wrong.Please try again",
+          description: err.message || "Something went wrong. Please try again",
           type: "error",
         });
       },
@@ -43,64 +43,56 @@ const Header = () => {
   };
 
   return (
-    <header className="border-b bg-background">
-      <div className="container mx-auto flex h-16 items-center justify-between px-4">
-        {/* Logo */}
-        <Link href="/" className="text-xl font-bold">
+    <header className="border-b bg-background w-full sticky top-0 z-50">
+    
+      <div className="container mx-auto flex flex-wrap md:flex-nowrap min-h-16 items-center justify-between px-4 sm:px-6 lg:px-8 py-3 md:py-0">
+    
+        <Link
+          href="/"
+          className="text-xl font-bold tracking-tight text-foreground whitespace-nowrap"
+        >
           DevAssess
         </Link>
 
-        {/* Navigation */}
-        <nav className="hidden items-center gap-6 md:flex">
+       
+        <nav className="flex items-center justify-center order-3 md:order-none w-full md:w-auto mt-3 md:mt-0 gap-3 sm:gap-4 md:gap-6 lg:gap-8 text-xs sm:text-sm font-medium">
           {routes.map((route) => (
-            <Link href={route.url} key={route.url}>
+            <Link
+              href={route.url}
+              key={route.url}
+              className="text-muted-foreground transition-colors hover:text-foreground whitespace-nowrap py-1 px-1.5 sm:px-0"
+            >
               {route.name}
             </Link>
-          ))}
-          {/* <Link
-            href="/"
-            className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
-          >
-            Home
-          </Link>
-
-          <Link
-            href="/problems"
-            className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
-          >
-            Problems
-          </Link>
-
-          <Link
-            href="/assessments"
-            className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
-          >
-            Assessments
-          </Link>
-
-          <Link
-            href="/about"
-            className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
-          >
-            About
-          </Link> */}
+          ))}   
         </nav>
 
-        {/* Auth */}
-        <div>
+       
+        <div className="flex items-center gap-2 sm:gap-4">
           {!isLoading && !user && (
             <Button
               variant="outline"
               render={<Link href="/login">Login</Link>}
               nativeButton={false}
+              className="h-8 px-3 text-xs sm:h-9 sm:px-4 sm:text-sm"
             >
               Login
             </Button>
           )}
-          {!isLoading && data && (
-            <Button onClick={handleLogout} variant="destructive">
-              Logout
-            </Button>
+          {!isLoading && user && (
+            <div className="flex items-center gap-2 sm:gap-3">
+           
+              <span className="hidden sm:inline-block text-xs sm:text-sm font-medium text-muted-foreground max-w-[100px] lg:max-w-[150px] truncate">
+                {user?.name || "User"}
+              </span>
+              <Button
+                onClick={handleLogout}
+                variant="destructive"
+                className="h-8 px-3 text-xs sm:h-9 sm:px-4 sm:text-sm"
+              >
+                Logout
+              </Button>
+            </div>
           )}
         </div>
       </div>

@@ -28,7 +28,7 @@ interface RegisterFormProps {
   role: "CANDIDATE" | "COMPANY";
 }
 
-const RegisterForm = ({ role }: RegisterFormProps) => {
+const RegisterForm = () => {
   const router = useRouter();
 
   const [showPassword, setShowPassword] = useState(false);
