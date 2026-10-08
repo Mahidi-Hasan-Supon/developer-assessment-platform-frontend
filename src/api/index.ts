@@ -1,2 +1,5 @@
 export * from "./auth.api"
 export * from "./company.api"
+export * from "./assessment.api"
+export * from "./problem.api"
+export * from "./assessmentProblem.api"
