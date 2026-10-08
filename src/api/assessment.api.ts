@@ -28,18 +28,18 @@ export async function createAssessment(payload: CreateAssessmentPayload) {
 
 
 
-// export async function updateAssessment(
-//   id: string,
-//   payload: Partial<CreateAssessmentPayload>,
-// ) {
-//   return apiClient<ApiResponse<Assessment>>(`/assessment/${id}`, {
-//     method: "PATCH",
-//     body: payload,
-//   });
-// }
+export async function updateAssessment(
+  id: string,
+  payload: Partial<CreateAssessmentPayload>,
+) {
+  return apiClient<ApiResponse<Assessment>>(`/assessment/${id}`, {
+    method: "PATCH",
+    body: payload,
+  });
+}
 
-// export async function deleteAssessment(id: string) {
-//   return apiClient<ApiResponse<null>>(`/assessment/${id}`, {
-//     method: "DELETE",
-//   });
-// }
+export async function deleteAssessment(id: string) {
+  return apiClient<ApiResponse<null>>(`/assessment/${id}`, {
+    method: "DELETE",
+  });
+}

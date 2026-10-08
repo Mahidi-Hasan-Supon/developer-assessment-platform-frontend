@@ -1,3 +1,6 @@
+"use client";
+
+import { useState } from "react";
 import Link from "next/link";
 
 import type { Assessment } from "@/types/assessment.types";
@@ -13,6 +16,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import DeleteAssessmentSheet from "./delete-assessment";
 
 interface AssessmentTableProps {
   assessments: Assessment[];
@@ -34,102 +38,138 @@ const statusStyles = {
 };
 
 const AssessmentTable = ({ assessments }: AssessmentTableProps) => {
+  const [selectedAssessment, setSelectedAssessment] =
+    useState<Assessment | null>(null);
+
   return (
-    <Card className="overflow-hidden">
-      <CardContent className="p-0">
-        <div className="overflow-x-auto">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="min-w-[280px]">Assessment</TableHead>
+    <>
+      <Card className="overflow-hidden">
+        <CardContent className="p-0">
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="min-w-[280px]">Assessment</TableHead>
 
-                <TableHead>Status</TableHead>
+                  <TableHead>Status</TableHead>
 
-                <TableHead>Duration</TableHead>
+                  <TableHead>Duration</TableHead>
 
-                <TableHead>Marks</TableHead>
+                  <TableHead>Marks</TableHead>
 
-                <TableHead>Pass Marks</TableHead>
+                  <TableHead>Pass Marks</TableHead>
 
-                <TableHead>Price</TableHead>
+                  <TableHead>Price</TableHead>
 
-                <TableHead className="text-right">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
+                  <TableHead className="text-right">Actions</TableHead>
+                </TableRow>
+              </TableHeader>
 
-            <TableBody>
-              {assessments.map((assessment) => (
-                <TableRow key={assessment.id} className="hover:bg-muted/50">
-                  {/* Assessment */}
-                  <TableCell>
-                    <div className="max-w-[320px] space-y-1">
-                      <p className="truncate font-medium">{assessment.title}</p>
-
-                      {assessment.description && (
-                        <p className="line-clamp-1 text-xs text-muted-foreground">
-                          {assessment.description}
+              <TableBody>
+                {assessments.map((assessment) => (
+                  <TableRow key={assessment.id} className="hover:bg-muted/50">
+                    {/* Assessment */}
+                    <TableCell>
+                      <div className="max-w-[320px] space-y-1">
+                        <p className="truncate font-medium">
+                          {assessment.title}
                         </p>
-                      )}
-                    </div>
-                  </TableCell>
 
-                  {/* Status */}
-                  <TableCell>
-                    <Badge
-                      variant="outline"
-                      className={statusStyles[assessment.status]}
-                    >
-                      {assessment.status}
-                    </Badge>
-                  </TableCell>
+                        {assessment.description && (
+                          <p className="line-clamp-1 text-xs text-muted-foreground">
+                            {assessment.description}
+                          </p>
+                        )}
+                      </div>
+                    </TableCell>
 
-                  {/* Duration */}
-                  <TableCell>
-                    <span className="whitespace-nowrap">
-                      {assessment.durationMinutes} min
-                    </span>
-                  </TableCell>
+                    {/* Status */}
+                    <TableCell>
+                      <Badge
+                        variant="outline"
+                        className={statusStyles[assessment.status]}
+                      >
+                        {assessment.status}
+                      </Badge>
+                    </TableCell>
 
-                  {/* Total Marks */}
-                  <TableCell>{assessment.totalMarks}</TableCell>
+                    {/* Duration */}
+                    <TableCell>
+                      <span className="whitespace-nowrap">
+                        {assessment.durationMinutes} min
+                      </span>
+                    </TableCell>
 
-                  {/* Pass Marks */}
-                  <TableCell>{assessment.passMarks}</TableCell>
+                    {/* Total Marks */}
+                    <TableCell>{assessment.totalMarks}</TableCell>
 
-                  {/* Price */}
-                  <TableCell>
-                    <span className="whitespace-nowrap font-medium">
-                      {assessment.price === 0 ? "Free" : `৳${assessment.price}`}
-                    </span>
-                  </TableCell>
+                    {/* Pass Marks */}
+                    <TableCell>{assessment.passMarks}</TableCell>
 
-                  {/* Actions */}
-                  <TableCell>
-                    <div className="flex justify-end gap-2">
-                      <Button variant="outline" size="sm">
-                        <Link href={`/company/assessments/${assessment.id}/questions`}>
-                          View
-                        </Link>
-                      </Button>
+                    {/* Price */}
+                    <TableCell>
+                      <span className="whitespace-nowrap font-medium">
+                        {assessment.price === 0
+                          ? "Free"
+                          : `৳${assessment.price}`}
+                      </span>
+                    </TableCell>
 
-                      {assessment.status === "DRAFT" && (
-                        <Button size="sm">
+                    {/* Actions */}
+                    <TableCell>
+                      <div className="flex justify-end gap-2">
+                        <Button variant="outline" size="sm">
+                          <Link
+                            href={`/company/assessments/${assessment.id}/edit`}
+                          >
+                            Edit
+                          </Link>
+                        </Button>
+
+                          <Button size="sm">
                           <Link
                             href={`/company/assessments/${assessment.id}/questions`}
                           >
-                            Continue
+                            {assessment.status === "DRAFT"
+                              ? "Continue"
+                              : "Manage"}
                           </Link>
                         </Button>
-                      )}
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </div>
-      </CardContent>
-    </Card>
+
+                        <Button
+                          variant="destructive"
+                          size="sm"
+                          disabled={
+                            assessment.status === "ONGOING" ||
+                            assessment.status === "COMPLETED" ||
+                            assessment.status === "ARCHIVED"
+                          }
+                          onClick={() => setSelectedAssessment(assessment)}
+                        >
+                          Delete
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        </CardContent>
+      </Card>
+
+      {selectedAssessment && (
+        <DeleteAssessmentSheet
+          assessment={selectedAssessment}
+          open={!!selectedAssessment}
+          onOpenChange={(open) => {
+            if (!open) {
+              setSelectedAssessment(null);
+            }
+          }}
+        />
+      )}
+    </>
   );
 };
 

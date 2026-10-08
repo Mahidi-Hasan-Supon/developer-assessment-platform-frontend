@@ -1,4 +1,4 @@
-import AssessmentQuestions from "@/components/modules/assessment/question/assessment-question";
+import AssessmentProblemList from "@/components/modules/assessmentProblem/assPlb-list";
 
 interface AssessmentQuestionsPageProps {
   params: Promise<{
@@ -6,10 +6,16 @@ interface AssessmentQuestionsPageProps {
   }>;
 }
 
-export default async function AssessmentQuestionsPage({
+const AssessmentQuestionsPage = async ({
   params,
-}: AssessmentQuestionsPageProps) {
+}: AssessmentQuestionsPageProps) => {
   const { id } = await params;
 
-  return <AssessmentQuestions assessmentId={id} />;
-}
+  return (
+    <div className="space-y-6 my-5 px-5">
+      <AssessmentProblemList assessmentId={id} />
+    </div>
+  );
+};
+
+export default AssessmentQuestionsPage;

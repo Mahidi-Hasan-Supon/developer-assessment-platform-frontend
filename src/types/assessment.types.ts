@@ -27,7 +27,7 @@ export interface AssessmentQuery {
   sortBy?: string;
   sortOrder?: "asc" | "desc";
 }
-   
+
 export interface CreateAssessmentPayload {
   title: string;
   description?: string;
@@ -45,3 +45,22 @@ export interface CreateAssessmentPayload {
 //   passMarks: number | undefined;
 //   price: number | undefined;
 // };
+
+export interface UpdateAssessmentPayload {
+  title?: string;
+  description?: string;
+  durationMinutes?: number;
+  totalMarks?: number;
+  passMarks?: number;
+  price?: number;
+}
+
+export interface UpdateAssessmentPayload {
+  title?: string;
+  description?: string;
+  durationMinutes?: number;
+  totalMarks?: number;
+  passMarks?: number;
+  price?: number;
+  status?: AssessmentStatus;
+}
