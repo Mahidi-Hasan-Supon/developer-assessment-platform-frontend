@@ -1,6 +1,4 @@
-const adminPrefix = "/dashboard/admin";
-
-
+const adminPrefix = "/admin";
 
 
 export const adminRoutes = [
@@ -16,8 +14,8 @@ export const adminRoutes = [
         url: `${adminPrefix}/users`,
       },
       {
-        title: "Company Applications",
-        url: `${adminPrefix}/company-applications`,
+        title: "Approve company",
+        url: `${adminPrefix}/approve-company`,
       },
       {
         title: "Assessments",

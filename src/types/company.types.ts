@@ -31,3 +31,31 @@ export interface CompanyProfile {
   createdAt: string;
   updatedAt: string;
 }
+
+export type CompanyStatus = "PENDING" | "APPROVED" | "REJECTED";
+
+export interface CompanyApplication {
+  id: string;
+  companyName: string | null;
+  description: string | null;
+  website: string | null;
+  location: string | null;
+  industry: string | null;
+  status: CompanyStatus;
+  reviewNote: string | null;
+  userId: string;
+  createdAt: string;
+  updatedAt: string;
+
+  user: {
+    id: string;
+    name: string;
+    email: string;
+  };
+}
+export type CompanyApplicationTab = "ALL" | CompanyStatus;
+
+export interface UpdateCompanyStatusPayload {
+  status: "APPROVED" | "REJECTED";
+  reviewNote?: string;
+}

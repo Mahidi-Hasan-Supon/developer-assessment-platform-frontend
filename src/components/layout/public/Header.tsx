@@ -1,7 +1,9 @@
 "use client";
+import Logo from "@/asserts/svg/logo";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/toast";
 import { useGetMe, useLogOut } from "@/hook";
+import { UserRole } from "@/types";
 import { useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
 
@@ -15,10 +17,18 @@ const Header = () => {
     { name: "Contract", url: "/contract" },
   ];
 
+  const dashboardRoute: Record<UserRole, string> = {
+    CANDIDATE: "/candidate",
+    COMPANY: "/company",
+    ADMIN: "/admin",
+  };
+
   const { data, isLoading } = useGetMe();
   const { mutate: logout } = useLogOut();
   console.log("data", data?.data);
   const user = data?.data;
+  const role: UserRole = !!data?.data && data?.data.role;
+  console.log(role);
 
   const handleLogout = () => {
     logout(undefined, {
@@ -44,17 +54,17 @@ const Header = () => {
 
   return (
     <header className="border-b bg-background w-full sticky top-0 z-50">
-    
       <div className="container mx-auto flex flex-wrap md:flex-nowrap min-h-16 items-center justify-between px-4 sm:px-6 lg:px-8 py-3 md:py-0">
-    
         <Link
           href="/"
           className="text-xl font-bold tracking-tight text-foreground whitespace-nowrap"
         >
-          DevAssess
+          <div className="flex items-center gap-2">
+            <Logo />
+            <span>DevAssess</span>
+          </div>
         </Link>
 
-       
         <nav className="flex items-center justify-center order-3 md:order-none w-full md:w-auto mt-3 md:mt-0 gap-3 sm:gap-4 md:gap-6 lg:gap-8 text-xs sm:text-sm font-medium">
           {routes.map((route) => (
             <Link
@@ -64,10 +74,10 @@ const Header = () => {
             >
               {route.name}
             </Link>
-          ))}   
+          ))}
+          {role && <Link href={dashboardRoute[role]}>Dashboard</Link>}
         </nav>
 
-       
         <div className="flex items-center gap-2 sm:gap-4">
           {!isLoading && !user && (
             <Button
@@ -81,7 +91,6 @@ const Header = () => {
           )}
           {!isLoading && user && (
             <div className="flex items-center gap-2 sm:gap-3">
-           
               <span className="hidden sm:inline-block text-xs sm:text-sm font-medium text-muted-foreground max-w-[100px] lg:max-w-[150px] truncate">
                 {user?.name || "User"}
               </span>

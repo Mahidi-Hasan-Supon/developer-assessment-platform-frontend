@@ -1,4 +1,4 @@
-const candidatePrefix = "/dashboard/candidate";
+const candidatePrefix = "/candidate";
 
 
 export const candidateRoutes = [

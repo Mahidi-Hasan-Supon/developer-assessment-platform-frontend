@@ -15,10 +15,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
+import { useState } from "react";
 
 export default function CompanyApplicationForm() {
   const router = useRouter();
   const { mutate, isPending } = useCreateCompanyApplication();
+  const [customIndustry, setCustomIndustry] = useState("");
 
   const form = useForm({
     defaultValues: {
@@ -97,16 +99,25 @@ export default function CompanyApplicationForm() {
           {(field) => {
             const hasError =
               field.state.meta.errors && field.state.meta.errors.length > 0;
+
             return (
               <Field data-invalid={hasError}>
                 <FieldLabel htmlFor={field.name}>Industry</FieldLabel>
+
                 <Select
                   value={field.state.value}
-                  onValueChange={(val) => field.handleChange(val || "")}
+                  onValueChange={(val) => {
+                    field.handleChange(val || "");
+
+                    if (val !== "Other") {
+                      setCustomIndustry("");
+                    }
+                  }}
                 >
                   <SelectTrigger className="w-full" onBlur={field.handleBlur}>
                     <SelectValue placeholder="Select industry" />
                   </SelectTrigger>
+
                   <SelectContent>
                     <SelectItem value="Software">Software</SelectItem>
                     <SelectItem value="Technology">Technology</SelectItem>
@@ -118,10 +129,13 @@ export default function CompanyApplicationForm() {
                   <Input
                     className="mt-2"
                     placeholder="Enter your industry"
-                    onChange={(e) => field.handleChange(e.target.value || "")}
-                    onBlur={field.handleBlur}
+                    value={customIndustry}
+                    onChange={(e) => {
+                      setCustomIndustry(e.target.value);
+                    }}
                   />
                 )}
+
                 {hasError && <FieldError errors={field.state.meta.errors} />}
               </Field>
             );

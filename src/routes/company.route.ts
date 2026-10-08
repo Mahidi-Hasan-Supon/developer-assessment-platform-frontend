@@ -1,4 +1,4 @@
-const companyPrefix = "/dashboard/company";
+const companyPrefix = "/company";
 export const companyRoutes = [
   {
     title: "Management",
