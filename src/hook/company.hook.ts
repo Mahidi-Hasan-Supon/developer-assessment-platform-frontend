@@ -1,9 +1,11 @@
 import {
   createCompanyApplication,
+  getCandidates,
   getCompanyApplications,
   updateCompanyApplicationStatus,
 } from "@/api/company.api";
 import { CompanyStatus } from "@/types";
+import { CandidateQuery } from "@/types/invitation.types";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export const useCreateCompanyApplication = () => {
@@ -32,3 +34,10 @@ export const useUpdateCompanyStatus = () => {
     },
   });
 };
+
+export function useCandidates(params: CandidateQuery = {}) {
+  return useQuery({
+    queryKey: ["candidates", params],
+    queryFn: () => getCandidates(params),
+  });
+}

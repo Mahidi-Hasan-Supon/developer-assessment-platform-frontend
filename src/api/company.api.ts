@@ -7,6 +7,7 @@ import {
   CompanyStatus,
   UpdateCompanyStatusPayload,
 } from "@/types/company.types";
+import { Candidate, CandidateQuery } from "@/types/invitation.types";
 
 export const createCompanyApplication = async (
   payload: CompanyApplicationPayload,
@@ -16,7 +17,6 @@ export const createCompanyApplication = async (
     body: payload,
   });
 };
-
 
 export const getCompanyApplications = async (status?: CompanyStatus) => {
   const query = status ? `?status=${status}` : "";
@@ -28,7 +28,6 @@ export const getCompanyApplications = async (status?: CompanyStatus) => {
     },
   );
 };
-
 
 export const updateCompanyApplicationStatus = async ({
   id,
@@ -45,3 +44,10 @@ export const updateCompanyApplicationStatus = async ({
     },
   );
 };
+
+export function getCandidates(params: CandidateQuery) {
+  return apiClient<ApiResponse<Candidate[]>>("/company/candidates", {
+    method: "GET",
+    query: params,
+  });
+}

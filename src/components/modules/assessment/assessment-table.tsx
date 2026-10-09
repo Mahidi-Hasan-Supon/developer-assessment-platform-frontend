@@ -17,6 +17,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import DeleteAssessmentSheet from "./delete-assessment";
+import PublishAssessmentSheet from "./assessment-publish-sheet";
+import StartAssessmentSheet from "./start-assessment-sheet";
 
 interface AssessmentTableProps {
   assessments: Assessment[];
@@ -39,6 +41,10 @@ const statusStyles = {
 
 const AssessmentTable = ({ assessments }: AssessmentTableProps) => {
   const [selectedAssessment, setSelectedAssessment] =
+    useState<Assessment | null>(null);
+  const [publishingAssessment, setPublishingAssessment] =
+    useState<Assessment | null>(null);
+  const [startingAssessment, setStartingAssessment] =
     useState<Assessment | null>(null);
 
   return (
@@ -126,15 +132,33 @@ const AssessmentTable = ({ assessments }: AssessmentTableProps) => {
                           </Link>
                         </Button>
 
-                          <Button size="sm">
+                        <Button size="sm">
                           <Link
                             href={`/company/assessments/${assessment.id}/questions`}
                           >
                             {assessment.status === "DRAFT"
-                              ? "Continue"
+                              ? "Continue create problem/question"
                               : "Manage"}
                           </Link>
                         </Button>
+                        {/* ongoing */}
+                        {/* {assessment.status === "PUBLISHED" && (
+                          <Button
+                            size="sm"
+                            onClick={() => setStartingAssessment(assessment)}
+                          >
+                            Start
+                          </Button>
+                        )} */}
+                        {/* published btn */}
+                        {assessment.status === "DRAFT" && (
+                          <Button
+                            size="sm"
+                            onClick={() => setPublishingAssessment(assessment)}
+                          >
+                            Publish
+                          </Button>
+                        )}
 
                         <Button
                           variant="destructive"
@@ -169,6 +193,30 @@ const AssessmentTable = ({ assessments }: AssessmentTableProps) => {
           }}
         />
       )}
+      {/* publish sheet */}
+      {publishingAssessment && (
+        <PublishAssessmentSheet
+          assessment={publishingAssessment}
+          open={!!publishingAssessment}
+          onOpenChange={(open) => {
+            if (!open) {
+              setPublishingAssessment(null);
+            }
+          }}
+        />
+      )}
+      {/* start assessment */}
+      {/* {startingAssessment && (
+        <StartAssessmentSheet
+          assessment={startingAssessment}
+          open={!!startingAssessment}
+          onOpenChange={(open) => {
+            if (!open) {
+              setStartingAssessment(null);
+            }
+          }}
+        />
+      )} */}
     </>
   );
 };

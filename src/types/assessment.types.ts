@@ -53,14 +53,5 @@ export interface UpdateAssessmentPayload {
   totalMarks?: number;
   passMarks?: number;
   price?: number;
-}
-
-export interface UpdateAssessmentPayload {
-  title?: string;
-  description?: string;
-  durationMinutes?: number;
-  totalMarks?: number;
-  passMarks?: number;
-  price?: number;
   status?: AssessmentStatus;
 }

@@ -18,6 +18,7 @@ import { useAssessmentProblems, useDeleteAssessmentProblem } from "@/hook";
 import AddAssessmentProblemSheet from "./assPlb.sheet";
 import EditAssessmentProblemSheet from "./edit-assPlb-sheet";
 import RemoveAssessmentProblemSheet from "./remove-assPlb";
+import AssessmentProblemLoading from "./assPlb-table-loading";
 
 interface AssessmentProblemListProps {
   assessmentId: string;
@@ -39,7 +40,6 @@ const AssessmentProblemList = ({
 
   const { data, isLoading, isError } = useAssessmentProblems(assessmentId);
 
-  const deleteMutation = useDeleteAssessmentProblem();
 
   const assessmentProblems = data?.data ?? [];
 
@@ -55,9 +55,7 @@ const AssessmentProblemList = ({
 
   if (isLoading) {
     return (
-      <div className="flex min-h-[300px] items-center justify-center">
-        <Spinner />
-      </div>
+      <AssessmentProblemLoading/>
     );
   }
 
