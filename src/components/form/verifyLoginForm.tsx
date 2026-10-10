@@ -35,8 +35,8 @@ import { toast } from "@/components/ui/toast";
 const RESEND_COOLDOWN = 120;
 
 const VerifyAccountForm = () => {
-  const router = useRouter();
   const searchParams = useSearchParams();
+  const router = useRouter();
 
   const email = searchParams.get("email") || "";
 

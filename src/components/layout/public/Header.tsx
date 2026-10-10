@@ -24,15 +24,12 @@ const Header = () => {
 
   const { data, isLoading } = useGetMe();
   const { mutate: logout } = useLogOut();
-  // console.log("data", data?.data);
   const user = data?.data;
   const role: UserRole = !!data?.data && data?.data.role;
-  console.log(role);
-
+  
   const handleLogout = () => {
     logout(undefined, {
       onSuccess: (res) => {
-        console.log(res);
         toast.add({
           title: "Tata",
           description: "Logout successfully",
@@ -41,7 +38,6 @@ const Header = () => {
         queryClient.removeQueries({ queryKey: ["user"] });
       },
       onError: (err) => {
-        console.log(err);
         toast.add({
           title: "Logout error",
           description: err.message || "Something went wrong. Please try again",
@@ -64,17 +60,25 @@ const Header = () => {
           </div>
         </Link>
 
-        <nav className="flex items-center justify-center order-3 md:order-none w-full md:w-auto mt-3 md:mt-0 gap-3 sm:gap-4 md:gap-6 lg:gap-8 text-xs sm:text-sm font-medium">
+        {/* এখানে gap কমানো হয়েছে: gap-2 sm:gap-4 md:gap-6 */}
+        <nav className="flex items-center justify-center order-3 md:order-none w-full md:w-auto mt-3 md:mt-0 gap-1 sm:gap-4 md:gap-6 lg:gap-8 text-xs sm:text-sm font-medium overflow-x-auto py-1">
           {routes.map((route) => (
             <Link
               href={route.url}
               key={route.url}
-              className="text-muted-foreground transition-colors hover:text-foreground whitespace-nowrap py-1 px-1.5 sm:px-0"
+              className="text-muted-foreground transition-colors hover:text-foreground whitespace-nowrap px-1 sm:px-0"
             >
               {route.name}
             </Link>
           ))}
-          {role && <Link href={dashboardRoute[role]}>Dashboard</Link>}
+          {role && (
+            <Link
+              href={dashboardRoute[role]}
+              className="text-muted-foreground transition-colors hover:text-foreground whitespace-nowrap px-1 sm:px-0"
+            >
+              Dashboard
+            </Link>
+          )}
         </nav>
 
         <div className="flex items-center gap-2 sm:gap-4">

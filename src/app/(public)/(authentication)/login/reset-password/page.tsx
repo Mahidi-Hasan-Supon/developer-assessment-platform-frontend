@@ -1,6 +1,7 @@
 import Logo from "@/asserts/svg/logo";
 import ResetPasswordForm from "@/components/form/resetPasswordForm";
 import Link from "next/link";
+import { Suspense } from "react";
 
 export default function ResetPasswordPage() {
   return (
@@ -14,12 +15,22 @@ export default function ResetPasswordPage() {
             </div>
           </Link>
         </div>
+
         <div className="flex flex-1 items-center justify-center">
-          <div className="w-full max-w-xs  ">
-            <ResetPasswordForm />
+          <div className="w-full max-w-xs">
+            <Suspense
+              fallback={
+                <p className="text-center text-sm text-muted-foreground">
+                  Loading reset password...
+                </p>
+              }
+            >
+              <ResetPasswordForm />
+            </Suspense>
           </div>
         </div>
       </div>
+
       <div className="relative hidden bg-muted lg:block">
         <img
           src="/register.jpg"

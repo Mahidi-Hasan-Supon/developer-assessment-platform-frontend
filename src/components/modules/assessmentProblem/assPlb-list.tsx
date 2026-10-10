@@ -27,11 +27,16 @@ import AssessmentProblemLoading from "./assPlb-table-loading";
 import { AssessmentProblemForm } from "@/components/form/assessmentProblemForm";
 import EditAssessmentProblemSheet from "./edit-assPlb-sheet";
 import RemoveAssessmentProblemSheet from "./remove-assPlb";
+interface AssessmentProblemsPageProps {
+  assessmentId: string;
+}
 
-export default function AssessmentProblemsPage() {
+export default function AssessmentProblemsPage({
+  assessmentId,
+}: AssessmentProblemsPageProps) {
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [selectedProblem, setSelectedProblem] =
-    useState<AssessmentProblem | null>(null);   
+    useState<AssessmentProblem | null>(null);
   const [editOpen, setEditOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
 

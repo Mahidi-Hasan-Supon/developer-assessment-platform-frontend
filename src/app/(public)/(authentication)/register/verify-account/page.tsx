@@ -1,12 +1,18 @@
-import VerifyEmailPage from "@/components/form/verifyLoginForm";
+import VerifyAccountForm from "@/components/form/verifyLoginForm";
+import { Suspense } from "react";
 
-const VerifyAccountPage = () => {
+export default function VerifyAccountPage() {
   return (
-    <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center px-4">
-      <VerifyEmailPage />
-    </div>
+    <Suspense
+      fallback={
+        <div className="flex min-h-[50vh] items-center justify-center">
+          <p className="text-sm text-muted-foreground">
+            Loading verification page...
+          </p>
+        </div>
+      }
+    >
+      <VerifyAccountForm />
+    </Suspense>
   );
-};
-
-export default VerifyAccountPage;
-
+}

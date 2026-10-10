@@ -218,7 +218,7 @@ export default function AdminAttemptsPage() {
               <TableHead>Submitted At</TableHead>
               <TableHead>Attempt Status</TableHead>
               <TableHead>Assessment Status</TableHead>
-              <TableHead className="text-right">Action</TableHead>
+              {/* <TableHead className="text-right">Action</TableHead> */}
             </TableRow>
           </TableHeader>
 
@@ -320,7 +320,7 @@ export default function AdminAttemptsPage() {
                     )}
                   </TableCell>
 
-                  <TableCell className="text-right">
+                  {/* <TableCell className="text-right">
                     <Button variant="outline" size="sm">
                       <Link
                         href={`/admin/attempts/${attempt.id}`}
@@ -330,7 +330,7 @@ export default function AdminAttemptsPage() {
                         Details
                       </Link>
                     </Button>
-                  </TableCell>
+                  </TableCell> */}
                 </TableRow>
               ))
             )}
