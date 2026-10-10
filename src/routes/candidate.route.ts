@@ -67,10 +67,7 @@ export const candidateRoutes = [
     items: [
      
      
-      {
-        title: "Submissions",
-        url: `${candidatePrefix}/submissions`,
-      },
+      
       {
         title: "Results",
         url: `${candidatePrefix}/results`,

@@ -25,23 +25,8 @@ export const adminRoutes = [
         title: "Attempts",
         url: `${adminPrefix}/attempts`,
       },
-      {
-        title: "Submissions",
-        url: `${adminPrefix}/submissions`,
-      },
-      {
-        title: "Results",
-        url: `${adminPrefix}/results`,
-      },
+     
     ],
   },
-  {
-    title: "Payments",
-    items: [
-      {
-        title: "Transactions",
-        url: `${adminPrefix}/payments`,
-      },
-    ],
-  },
+ 
 ];
