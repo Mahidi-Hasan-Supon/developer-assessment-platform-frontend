@@ -4,4 +4,7 @@ export * from "./assessment.types"
 export * from "./problem.types"
 export * from "./assessmentProblem.types"
 export * from "./attempt.types"
+export * from "./result.types"
+export * from "./submission.types"
+export * from "./user.types"
 

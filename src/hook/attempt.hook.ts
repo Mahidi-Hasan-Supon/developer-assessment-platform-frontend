@@ -36,19 +36,12 @@ export function useSubmitAttempt() {
   return useMutation({
     mutationFn: submitAttempt,
 
-    onSuccess: async (_, attemptId) => {
+    onSuccess: async () => {
       await Promise.all([
-        queryClient.invalidateQueries({
-          queryKey: ["attempt", attemptId],
-        }),
-        queryClient.invalidateQueries({
-          queryKey: ["my-attempts"],
-        }),
-        queryClient.invalidateQueries({
-          queryKey: ["my-submissions"],
-        }),
+        queryClient.invalidateQueries({ queryKey: ["attempt"] }),
+        queryClient.invalidateQueries({ queryKey: ["my-attempts"] }),
+        queryClient.invalidateQueries({ queryKey: ["my-submissions"] }),
       ]);
     },
   });
 }
-

@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -143,10 +142,8 @@ export default function AttemptPage() {
   const submissionId = attempt?.submission?.id ?? "";
 
   // Fetch answers already saved in the backend.
-  const {
-    data: savedAnswersResponse,
-    isLoading: isSavedAnswersLoading,
-  } = useMyAnswers(submissionId);
+  const { data: savedAnswersResponse, isLoading: isSavedAnswersLoading } =
+    useMyAnswers(submissionId);
 
   const problems: AttemptProblem[] =
     attempt?.assessment?.assessmentProblems ?? [];
@@ -236,9 +233,7 @@ export default function AttemptPage() {
     const updateTimer = () => {
       const seconds = Math.max(
         0,
-        Math.ceil(
-          (new Date(attempt.expiresAt).getTime() - Date.now()) / 1000,
-        ),
+        Math.ceil((new Date(attempt.expiresAt).getTime() - Date.now()) / 1000),
       );
 
       setRemainingSeconds(seconds);
@@ -251,6 +246,7 @@ export default function AttemptPage() {
     return () => window.clearInterval(intervalId);
   }, [attempt?.expiresAt, isInProgress]);
 
+  // const submissionId = attempt?.submission?.id ?? "";
   const handleSubmit = async (automatic = false) => {
     if (!attempt?.id || !isInProgress || isSubmitting) return;
     if (autoSubmitStarted.current) return;
@@ -259,26 +255,24 @@ export default function AttemptPage() {
     setSubmitDialogOpen(false);
 
     try {
-      const response = await submitMutation.mutateAsync(attempt.id);
+      if (!submissionId) {
+        throw new Error("Submission ID not found");
+      }
+
+      console.log("🔥 ATTEMPT ID:", attempt.id);
+      console.log("🔥 SUBMISSION ID:", submissionId);
+
+      const response = await submitMutation.mutateAsync(submissionId);
 
       if (response && response.success === false) {
-        autoSubmitStarted.current = false;
-
-        toast.add({
-          title: "Submission failed",
-          description:
-            response.message ?? "Your attempt could not be submitted.",
-          type: "error",
-        });
-
-        return;
+        throw new Error(
+          response.message ?? "Your attempt could not be submitted.",
+        );
       }
 
       toast.add({
         title: automatic ? "Time is up" : "Attempt submitted",
-        description: automatic
-          ? "Your attempt has been submitted."
-          : "Your attempt was submitted successfully.",
+        description: "Your attempt was submitted successfully.",
         type: "success",
       });
 
@@ -293,7 +287,6 @@ export default function AttemptPage() {
       });
     }
   };
-
   // Auto-submit only when the backend expiry time has actually passed.
   useEffect(() => {
     if (
@@ -591,9 +584,7 @@ export default function AttemptPage() {
           <aside className="space-y-4">
             <Card>
               <CardHeader>
-                <CardTitle className="text-base">
-                  Question navigation
-                </CardTitle>
+                <CardTitle className="text-base">Question navigation</CardTitle>
                 <CardDescription>
                   Select a question to go directly to it.
                 </CardDescription>
@@ -602,9 +593,7 @@ export default function AttemptPage() {
               <CardContent>
                 <div className="grid grid-cols-5 gap-2">
                   {problems.map((item, index) => {
-                    const answered = Boolean(
-                      answers[item.problem.id]?.trim(),
-                    );
+                    const answered = Boolean(answers[item.problem.id]?.trim());
 
                     return (
                       <Button
@@ -655,9 +644,7 @@ export default function AttemptPage() {
             {isInProgress && (
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-base">
-                    Submit assessment
-                  </CardTitle>
+                  <CardTitle className="text-base">Submit assessment</CardTitle>
                   <CardDescription>
                     Review your answers before submitting.
                   </CardDescription>
@@ -730,7 +717,3 @@ export default function AttemptPage() {
     </main>
   );
 }
-        
-
-
-

@@ -6,5 +6,7 @@ export * from "./attempt.hook"
 export * from "./payment.hook"
 export * from "./submission.hook"
 export * from "./answer.hook"
+export * from "./result.hook"
+export * from "./analytics.hook"
 
 

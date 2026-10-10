@@ -1,6 +1,5 @@
 const adminPrefix = "/admin";
 
-
 export const adminRoutes = [
   {
     title: "Management",
@@ -11,19 +10,11 @@ export const adminRoutes = [
       },
       {
         title: "Users",
-        url: `${adminPrefix}/users`,
+        url: `${adminPrefix}/user-management`,
       },
       {
-        title: "Approve company",
+        title: "Approve Company",
         url: `${adminPrefix}/approve-company`,
-      },
-      {
-        title: "Assessments",
-        url: `${adminPrefix}/assessments`,
-      },
-      {
-        title: "Problems",
-        url: `${adminPrefix}/problems`,
       },
     ],
   },

@@ -23,8 +23,13 @@ export function getAttemptById(attemptId: string) {
   );
 }
 
-export function submitAttempt(attemptId: string) {
-  return apiClient<ApiResponse<Attempt>>(`/attempt/${attemptId}/submit`, {
-    method: "PATCH",
-  });
+export function submitAttempt(submissionId: string) {
+  console.log("🔥 API received submission ID:", submissionId);
+
+  return apiClient<ApiResponse<Attempt>>(
+    `/submission/${submissionId}/submit`,
+    {
+      method: "PATCH",
+    },
+  );
 }
