@@ -26,23 +26,6 @@ export const companyRoutes = [
     ],
   },
   {
-    title: "Assessment Activity",
-    items: [
-      {
-        title: "Attempts",
-        url: `${companyPrefix}/attempts`,
-      },
-      {
-        title: "Submissions",
-        url: `${companyPrefix}/submissions`,
-      },
-      {
-        title: "Results",
-        url: `${companyPrefix}/results`,
-      },
-    ],
-  },
-  {
     title: "Company",
     items: [
       {

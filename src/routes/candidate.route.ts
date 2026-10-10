@@ -65,14 +65,8 @@ export const candidateRoutes = [
   {
     title: "My Activity",
     items: [
-      {
-        title: "Payments",
-        url: `${candidatePrefix}/payments`,
-      },
-      {
-        title: "Attempts",
-        url: `${candidatePrefix}/attempts`,
-      },
+     
+     
       {
         title: "Submissions",
         url: `${candidatePrefix}/submissions`,
