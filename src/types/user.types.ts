@@ -1,3 +1,5 @@
+import { PaginationMeta } from "./attempt.types";
+
 export type UserStatus = "ACTIVE" | "BLOCKED";
 
 export interface Candidate {
@@ -17,12 +19,7 @@ export interface CandidateListParams {
   limit?: number;
 }
 
-export interface PaginationMeta {
-  page: number;
-  limit: number;
-  total: number;
-  totalPages: number;
-}
+
 
 export interface CandidateListResponse {
   success: boolean;

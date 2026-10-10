@@ -7,7 +7,7 @@ import type {
 } from "@/types/user.types";
 
 export function getAllCandidates(params: CandidateListParams) {
-  return apiClient<CandidateListResponse>("/users/candidates", {
+  return apiClient<CandidateListResponse>("/user/candidates", {
     method: "GET",
     query: {
       ...(params.search ? { search: params.search } : {}),
@@ -19,7 +19,7 @@ export function getAllCandidates(params: CandidateListParams) {
 }
 
 export function updateCandidateStatus(id: string, status: UserStatus) {
-  return apiClient<CandidateStatusResponse>(`/users/candidates/${id}/status`, {
+  return apiClient<CandidateStatusResponse>(`/user/candidates/${id}/status`, {
     method: "PATCH",
     body: { status },
   });

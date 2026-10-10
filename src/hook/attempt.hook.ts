@@ -1,15 +1,7 @@
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
-import {
-  useMutation,
-  useQuery,
-  useQueryClient,
-} from "@tanstack/react-query";
-
-import {
-  getAttemptById,
-  startAttempt,
-  submitAttempt,
-} from "@/api/attempt.api";
+import { getAllAttempts, getAttemptById, startAttempt, submitAttempt } from "@/api/attempt.api";
+import { AttemptQuery } from "@/types";
 
 export function useStartAttempt() {
   return useMutation({
@@ -45,3 +37,20 @@ export function useSubmitAttempt() {
     },
   });
 }
+
+
+export const attemptKeys = {
+  all: ["attempts"] as const,
+  list: (params: AttemptQuery) => ["attempts", "list", params] as const,
+  detail: (id: string) => ["attempts", "detail", id] as const,
+};
+
+export function useAllAttempts(params: AttemptQuery) {
+  return useQuery({
+    queryKey: attemptKeys.list(params),
+    queryFn: () => getAllAttempts(params),
+    staleTime: 60_000,
+  });
+}
+
+

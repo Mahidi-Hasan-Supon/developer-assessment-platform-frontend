@@ -67,11 +67,14 @@ export default function CandidatesManagementPage() {
     setPage(1);
   };
 
-  const handleStatusFilter = (value: string) => {
-    setStatus(value as "ALL" | UserStatus);
-    setPage(1);
-  };
+  const handleStatusFilter = (
+  value: "ALL" | UserStatus | null,
+) => {
+  if (value === null) return;
 
+  setStatus(value);
+  setPage(1);
+};
   const handleToggleStatus = (
     id: string,
     name: string,

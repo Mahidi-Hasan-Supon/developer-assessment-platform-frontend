@@ -1,4 +1,4 @@
-import React from 'react';
+import CandidatesManagementPage from '@/components/modules/admin/user-page';
 
 const UserManagementPage = () => {
     return (
