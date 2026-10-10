@@ -1,9 +1,16 @@
 "use client";
 
 import { useState } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+
+import {
+  useAssessments,
+  useProblems,
+  useCreateAssessmentProblem,
+} from "@/hook";
 
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Table,
   TableBody,
@@ -12,211 +19,221 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Spinner } from "@/components/ui/spinner";
-import { AssessmentProblem } from "@/types";
-import { useAssessmentProblems, useDeleteAssessmentProblem } from "@/hook";
-import AddAssessmentProblemSheet from "./assPlb.sheet";
+import { Badge } from "@/components/ui/badge";
+import { toast } from "@/components/ui/toast";
+import type { AssessmentProblem } from "@/types";
+import { getAllAssessmentProblems } from "@/api";
+import AssessmentProblemLoading from "./assPlb-table-loading";
+import { AssessmentProblemForm } from "@/components/form/assessmentProblemForm";
 import EditAssessmentProblemSheet from "./edit-assPlb-sheet";
 import RemoveAssessmentProblemSheet from "./remove-assPlb";
-import AssessmentProblemLoading from "./assPlb-table-loading";
 
-interface AssessmentProblemListProps {
-  assessmentId: string;
-}
-
-const AssessmentProblemList = ({
-  assessmentId,
-}: AssessmentProblemListProps) => {
-  const [addOpen, setAddOpen] = useState(false);
-  const [removingProblem, setRemovingProblem] =
-    useState<AssessmentProblem | null>(null);
-
-  const [removeOpen, setRemoveOpen] = useState(false);
-
-  const [editingProblem, setEditingProblem] =
-    useState<AssessmentProblem | null>(null);
-
+export default function AssessmentProblemsPage() {
+  const [showCreateForm, setShowCreateForm] = useState(false);
+  const [selectedProblem, setSelectedProblem] =
+    useState<AssessmentProblem | null>(null);   
   const [editOpen, setEditOpen] = useState(false);
+  const [deleteOpen, setDeleteOpen] = useState(false);
 
-  const { data, isLoading, isError } = useAssessmentProblems(assessmentId);
+  const queryClient = useQueryClient();
 
+  const assessmentProblemsQuery = useQuery({
+    queryKey: ["assessment-problems"],
+    queryFn: () => getAllAssessmentProblems(),
+  });
 
-  const assessmentProblems = data?.data ?? [];
+  const { data: assessmentData } = useAssessments({ page: 1, limit: 100 });
+  const { data: problemData } = useProblems({ page: 1, limit: 100 });
+  const createMutation = useCreateAssessmentProblem();
 
-  const handleEdit = (assessmentProblem: AssessmentProblem) => {
-    setEditingProblem(assessmentProblem);
-    setEditOpen(true);
+  const rows = assessmentProblemsQuery.data?.data ?? [];
+  const assessments = assessmentData?.data ?? [];
+  const problems = problemData?.data ?? [];
+
+  const handleCreate = (
+    assessmentId: string,
+    payload: { problemId: string; order: number; marks?: number },
+  ) => {
+    createMutation.mutate(
+      { assessmentId, payload },
+      {
+        onSuccess: async (response) => {
+          if (!response.success) {
+            toast.add({
+              title: "Create failed",
+              description: response.message || "Failed to add problem.",
+              type: "error",
+            });
+            return;
+          }
+
+          toast.add({
+            title: "Problem added",
+            description: "Assessment problem created successfully.",
+            type: "success",
+          });
+
+          await queryClient.invalidateQueries({
+            queryKey: ["assessment-problems"],
+          });
+
+          setShowCreateForm(false);
+        },
+        onError: (error) => {
+          toast.add({
+            title: "Create failed",
+            description: error.message || "Failed to add problem.",
+            type: "error",
+          });
+        },
+      },
+    );
   };
 
-  const handleRemove = (assessmentProblem: AssessmentProblem) => {
-    setRemovingProblem(assessmentProblem);
-    setRemoveOpen(true);
-  };
-
-  if (isLoading) {
-    return (
-      <AssessmentProblemLoading/>
-    );
-  }
-
-  if (isError) {
-    return (
-      <Card>
-        <CardContent className="py-10 text-center text-sm text-destructive">
-          Failed to load assessment problems.
-        </CardContent>
-      </Card>
-    );
+  if (assessmentProblemsQuery.isLoading) {
+    return <AssessmentProblemLoading />;
   }
 
   return (
-    <>
-      <div className="space-y-6">
-        {/* Header */}
-        <div className="flex items-center justify-between gap-4">
-          <div>
-            <h2 className="text-xl font-semibold">Assessment Problems</h2>
-
-            <p className="mt-1 text-sm text-muted-foreground">
-              Add and manage problems for this assessment.
-            </p>
-          </div>
-
-          <Button onClick={() => setAddOpen(true)}>Add Problem</Button>
+    <div className="space-y-6 p-4 md:p-6">
+      <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
+        <div>
+          <h1 className="text-2xl font-semibold">Assessment Problems</h1>
+          <p className="text-sm text-muted-foreground">
+            Manage problems linked to your assessments.
+          </p>
         </div>
 
-        {/* Table */}
-        {assessmentProblems.length === 0 ? (
-          <div className="rounded-lg border border-dashed px-6 py-12 text-center">
-            <p className="font-medium">No problems added</p>
-
-            <p className="mt-1 text-sm text-muted-foreground">
-              Add existing problems to this assessment.
-            </p>
-
-            <Button className="mt-4" onClick={() => setAddOpen(true)}>
-              Add Problem
-            </Button>
-          </div>
-        ) : (
-          <div className="overflow-x-auto rounded-lg border">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Order</TableHead>
-                  <TableHead>Problem</TableHead>
-                  <TableHead>Type</TableHead>
-                  <TableHead>Difficulty</TableHead>
-                  <TableHead>Marks</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-
-              <TableBody>
-                {assessmentProblems.map((assessmentProblem) => (
-                  <TableRow key={assessmentProblem.id}>
-                    <TableCell className="font-medium">
-                      {assessmentProblem.order}
-                    </TableCell>
-
-                    <TableCell>
-                      <div className="max-w-[350px]">
-                        <p className="truncate font-medium">
-                          {assessmentProblem.problem?.title ||
-                            "Unknown Problem"}
-                        </p>
-
-                        {assessmentProblem.problem?.description && (
-                          <p className="mt-1 line-clamp-1 text-xs text-muted-foreground">
-                            {assessmentProblem.problem.description}
-                          </p>
-                        )}
-                      </div>
-                    </TableCell>
-
-                    <TableCell>
-                      <span
-                        className={
-                          assessmentProblem.problem?.type === "MCQ"
-                            ? "font-medium text-blue-600 dark:text-blue-400"
-                            : assessmentProblem.problem?.type === "WRITTEN"
-                              ? "font-medium text-purple-600 dark:text-purple-400"
-                              : "font-medium text-orange-600 dark:text-orange-400"
-                        }
-                      >
-                        {assessmentProblem.problem?.type || "-"}
-                      </span>
-                    </TableCell>
-
-                    <TableCell>
-                      <span
-                        className={
-                          assessmentProblem.problem?.difficulty === "EASY"
-                            ? "font-medium text-green-600 dark:text-green-400"
-                            : assessmentProblem.problem?.difficulty === "MEDIUM"
-                              ? "font-medium text-yellow-600 dark:text-yellow-400"
-                              : "font-medium text-red-600 dark:text-red-400"
-                        }
-                      >
-                        {assessmentProblem.problem?.difficulty || "-"}
-                      </span>
-                    </TableCell>
-
-                    <TableCell>
-                      <span className="font-medium text-foreground">
-                        {assessmentProblem.marks ??
-                          assessmentProblem.problem?.marks ??
-                          "-"}
-                      </span>
-                    </TableCell>
-
-                    <TableCell>
-                      <div className="flex justify-end gap-2">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => handleEdit(assessmentProblem)}
-                        >
-                          Edit
-                        </Button>
-
-                        <Button
-                          variant="destructive"
-                          size="sm"
-                          onClick={() => handleRemove(assessmentProblem)}
-                        >
-                          Remove
-                        </Button>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
-        )}
+        <Button onClick={() => setShowCreateForm((open) => !open)}>
+          {showCreateForm ? "Close Form" : "Create Assessment Problem"}
+        </Button>
       </div>
 
-      <AddAssessmentProblemSheet
-        assessmentId={assessmentId}
-        open={addOpen}
-        onOpenChange={setAddOpen}
-      />
+      {showCreateForm && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Create Assessment Problem</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <AssessmentProblemForm
+              assessments={assessments}
+              problems={problems}
+              isPending={createMutation.isPending}
+              onSubmit={handleCreate}
+            />
+          </CardContent>
+        </Card>
+      )}
 
-      <EditAssessmentProblemSheet
-        assessmentId={assessmentId}
-        assessmentProblem={editingProblem}
-        open={editOpen}
-        onOpenChange={setEditOpen}
-      />
-      <RemoveAssessmentProblemSheet
-        assessmentId={assessmentId}
-        assessmentProblem={removingProblem}
-        open={removeOpen}
-        onOpenChange={setRemoveOpen}
-      />
-    </>
+      <Card>
+        <CardHeader>
+          <CardTitle>Assessment Problem List</CardTitle>
+        </CardHeader>
+
+        <CardContent>
+          {assessmentProblemsQuery.isError ? (
+            <p className="py-10 text-center text-sm text-destructive">
+              Failed to load assessment problems.
+            </p>
+          ) : rows.length === 0 ? (
+            <div className="py-12 text-center">
+              <p className="font-medium">No assessment problem data found</p>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Click Create Assessment Problem to add one.
+              </p>
+            </div>
+          ) : (
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Assessment</TableHead>
+                    <TableHead>Problem</TableHead>
+                    <TableHead>Type</TableHead>
+                    <TableHead>Difficulty</TableHead>
+                    <TableHead>Order</TableHead>
+                    <TableHead>Marks</TableHead>
+                    <TableHead className="text-right">Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+
+                <TableBody>
+                  {rows.map((item) => (
+                    <TableRow key={item.id}>
+                      <TableCell>
+                        {item.assessment?.title ?? "Unknown assessment"}
+                      </TableCell>
+                      <TableCell>
+                        {item.problem?.title ?? "Unknown problem"}
+                      </TableCell>
+                      <TableCell>
+                        {item.problem?.type ? (
+                          <Badge variant="secondary">{item.problem.type}</Badge>
+                        ) : (
+                          "—"
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        {item.problem?.difficulty ? (
+                          <Badge variant="outline">
+                            {item.problem.difficulty}
+                          </Badge>
+                        ) : (
+                          "—"
+                        )}
+                      </TableCell>
+                      <TableCell>{item.order}</TableCell>
+                      <TableCell>{item.marks ?? "—"}</TableCell>
+                      <TableCell>
+                        <div className="flex justify-end gap-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => {
+                              setSelectedProblem(item);
+                              setEditOpen(true);
+                            }}
+                          >
+                            Edit
+                          </Button>
+                          <Button
+                            variant="destructive"
+                            size="sm"
+                            onClick={() => {
+                              setSelectedProblem(item);
+                              setDeleteOpen(true);
+                            }}
+                          >
+                            Delete
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {selectedProblem && (
+        <>
+          <EditAssessmentProblemSheet
+            assessmentId={selectedProblem.assessmentId}
+            assessmentProblem={selectedProblem}
+            open={editOpen}
+            onOpenChange={setEditOpen}
+          />
+
+          <RemoveAssessmentProblemSheet
+            assessmentId={selectedProblem.assessmentId}
+            assessmentProblem={selectedProblem}
+            open={deleteOpen}
+            onOpenChange={setDeleteOpen}
+          />
+        </>
+      )}
+    </div>
   );
-};
-
-export default AssessmentProblemList;
+}

@@ -11,8 +11,7 @@ const Header = () => {
   const queryClient = useQueryClient();
   const routes = [
     { name: "Home", url: "/" },
-    { name: "Problem", url: "/problems" },
-    { name: "Assessment", url: "/assessment" },
+    { name: "Assessment", url: "/assessments" },
     { name: "About us", url: "/about-us" },
     { name: "Contract", url: "/contract" },
   ];
@@ -25,7 +24,7 @@ const Header = () => {
 
   const { data, isLoading } = useGetMe();
   const { mutate: logout } = useLogOut();
-  console.log("data", data?.data);
+  // console.log("data", data?.data);
   const user = data?.data;
   const role: UserRole = !!data?.data && data?.data.role;
   console.log(role);

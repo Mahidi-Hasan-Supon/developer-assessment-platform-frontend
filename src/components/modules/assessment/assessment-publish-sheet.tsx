@@ -55,17 +55,39 @@ const PublishAssessmentSheet = ({
 
           onOpenChange(false);
         },
+
         onError: (error) => {
+          const apiError = error as Error & {
+            data?: { message?: string };
+            response?: {
+              _data?: { message?: string };
+              data?: { message?: string };
+            };
+          };
+
+          const message =
+            apiError.response?._data?.message ??
+            apiError.response?.data?.message ??
+            apiError.data?.message ??
+            apiError.message;
+
+          const isMarksMismatch =
+            message?.includes("Total question marks") &&
+            message?.includes("must equal assessment total marks");
+
           toast.add({
-            title: "Publish failed",
-            description: error.message || "Failed to publish assessment.",
+            title: isMarksMismatch
+              ? "Assessment marks don't match"
+              : "Publish failed",
+            description: isMarksMismatch
+              ? message.replace("Cannot publish assessment. ", "")
+              : message || "Failed to publish assessment.",
             type: "error",
           });
         },
       },
     );
   };
-
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent className="sm:max-w-md">

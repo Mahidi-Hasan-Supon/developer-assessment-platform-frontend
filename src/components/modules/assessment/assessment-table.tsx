@@ -132,7 +132,7 @@ const AssessmentTable = ({ assessments }: AssessmentTableProps) => {
                           </Link>
                         </Button>
 
-                        <Button size="sm">
+                        {/* <Button size="sm">
                           <Link
                             href={`/company/assessments/${assessment.id}/questions`}
                           >
@@ -140,7 +140,7 @@ const AssessmentTable = ({ assessments }: AssessmentTableProps) => {
                               ? "Continue create problem/question"
                               : "Manage"}
                           </Link>
-                        </Button>
+                        </Button> */}
                         {/* ongoing */}
                         {/* {assessment.status === "PUBLISHED" && (
                           <Button
