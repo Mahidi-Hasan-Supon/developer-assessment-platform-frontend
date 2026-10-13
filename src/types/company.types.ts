@@ -24,12 +24,21 @@ export interface CompanyProfile {
   companyName: string | null;
   description: string | null;
   website: string | null;
+  contactNumber: string | null;
   location: string | null;
   industry: string | null;
-  status: string;
+  status: CompanyStatus;
+  reviewNote: string | null;
   userId: string;
   createdAt: string;
   updatedAt: string;
+
+  user: {
+    id: string;
+    name: string;
+    email: string;
+    emailVerified: boolean;
+  };
 }
 
 export type CompanyStatus = "PENDING" | "APPROVED" | "REJECTED";
@@ -60,4 +69,11 @@ export interface UpdateCompanyStatusPayload {
   reviewNote?: string;
 }
 
-
+export type UpdateCompanyProfilePayload = {
+  companyName?: string;
+  description?: string;
+  website?: string;
+  contactNumber?: string;
+  location?: string;
+  industry?: string;
+};

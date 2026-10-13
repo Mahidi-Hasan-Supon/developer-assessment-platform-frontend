@@ -111,10 +111,10 @@ export const companyRoutes = [
         title: "Company Profile",
         url: `${companyPrefix}/profile`,
       },
-      {
-        title: "Settings",
-        url: `${companyPrefix}/settings`,
-      },
+      // {
+      //   title: "Settings",
+      //   url: `${companyPrefix}/settings`,
+      // },
     ],
   },
 ];

@@ -5,6 +5,7 @@ import {
   CompanyApplicationPayload,
   CompanyProfile,
   CompanyStatus,
+  UpdateCompanyProfilePayload,
   UpdateCompanyStatusPayload,
 } from "@/types/company.types";
 import { Candidate, CandidateQuery } from "@/types/invitation.types";
@@ -49,5 +50,18 @@ export function getCandidates(params: CandidateQuery) {
   return apiClient<ApiResponse<Candidate[]>>("/company/candidates", {
     method: "GET",
     query: params,
+  });
+}
+
+export function getMyCompanyProfile() {
+  return apiClient<ApiResponse<CompanyProfile>>("/company/profile", {
+    method: "GET",
+  });
+}
+
+export function updateMyCompanyProfile(payload: UpdateCompanyProfilePayload) {
+  return apiClient<ApiResponse<CompanyProfile>>("/company/profile", {
+    method: "PATCH",
+    body: payload,
   });
 }

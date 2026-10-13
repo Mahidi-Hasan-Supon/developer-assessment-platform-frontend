@@ -2,9 +2,11 @@ import {
   createCompanyApplication,
   getCandidates,
   getCompanyApplications,
+  getMyCompanyProfile,
   updateCompanyApplicationStatus,
+  updateMyCompanyProfile,
 } from "@/api/company.api";
-import { CompanyStatus } from "@/types";
+import { CompanyStatus, UpdateCompanyProfilePayload } from "@/types";
 import { CandidateQuery } from "@/types/invitation.types";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
@@ -39,5 +41,32 @@ export function useCandidates(params: CandidateQuery = {}) {
   return useQuery({
     queryKey: ["candidates", params],
     queryFn: () => getCandidates(params),
+  });
+}
+
+export function useMyCompanyProfile() {
+  return useQuery({
+    queryKey: ["company", "profile"],
+    queryFn: getMyCompanyProfile,
+    staleTime: 60 * 1000,
+  });
+}
+
+export function useUpdateMyCompanyProfile() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (payload: UpdateCompanyProfilePayload) =>
+      updateMyCompanyProfile(payload),
+
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({
+        queryKey: ["company", "profile"],
+      });
+
+      await queryClient.invalidateQueries({
+        queryKey: ["auth", "me"],
+      });
+    },
   });
 }

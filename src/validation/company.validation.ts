@@ -27,3 +27,19 @@ export const companyApplicationSchema = z.object({
 //       message: "Please provide valid Bangladeshi number",
 //     })
 //     .optional(),
+
+export const profileSchema = z.object({
+  companyName: z.string().min(2, "Company name must be at least 2 characters"),
+  website: z.union([
+    z.string().url("Enter a valid website URL"),
+    z.literal(""),
+  ]),
+  industry: z.string(),
+  location: z.string(),
+  contactNumber: z
+    .string()
+    .refine((val) => val === "" || /^(?:\+?880|0)1[3-9]\d{8}$/.test(val), {
+      message: "Please provide valid Bangladeshi number",
+    }),
+  description: z.string().max(1000, "Maximum 1000 characters"),
+});
