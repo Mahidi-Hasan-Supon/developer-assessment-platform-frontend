@@ -1,6 +1,6 @@
 import apiClient from "@/lib/apiClient";
 import type { ApiResponse } from "@/types";
-import type { ResultItem } from "@/types/result.types";
+import type { CompanyResultItem, CompanyResultsMeta, CompanyResultsQuery, ResultItem } from "@/types/result.types";
 
 export function getMyResults() {
   return apiClient<ApiResponse<ResultItem[]>>("/result/my", {
@@ -30,5 +30,17 @@ export function evaluateResult(resultId: string) {
 export function publishResult(resultId: string) {
   return apiClient<ApiResponse<ResultItem>>(`/result/publish/${resultId}`, {
     method: "PATCH",
+  });
+}
+
+type CompanyResultsResponse = ApiResponse<CompanyResultItem[]> & {
+  meta?: CompanyResultsMeta;
+};
+
+export function getCompanyResults(params?: CompanyResultsQuery
+) {
+  return apiClient<CompanyResultsResponse>("/result/company/results", {
+    method: "GET",
+    query: params,
   });
 }

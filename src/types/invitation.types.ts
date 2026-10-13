@@ -68,3 +68,23 @@ export interface CandidateMeta {
   total: number;
   totalPages: number;
 }
+
+export interface Candidate {
+  id: string;
+  name: string;
+  email: string;
+  createdAt: string;
+  candidateProfile: {
+    phone: string | null;
+    profileImage: string | null;
+    bio: string | null;
+    skills: string[];
+    resume: string | null;
+  } | null;
+}
+
+export interface CandidateQuery {
+  searchTerm?: string;
+  page?: number;
+  limit?: number;
+}

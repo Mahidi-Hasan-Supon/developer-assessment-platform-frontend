@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { getMyResults, getResultById } from "@/api/result.api";
-import { ApiResponse, ResultItem } from "@/types";
+import { getCompanyResults, getMyResults, getResultById } from "@/api/result.api";
+import { ApiResponse, CompanyResultsQuery, ResultItem } from "@/types";
 import apiClient from "@/lib/apiClient";
 import { createResult, evaluateResult, publishResult } from "@/api";
 
@@ -20,8 +20,6 @@ export function useResultById(resultId: string) {
     staleTime: 60 * 1000,
   });
 }
-
-
 
 export function useCreateResult() {
   const queryClient = useQueryClient();
@@ -68,5 +66,15 @@ export function usePublishResult() {
         queryKey: ["results"],
       });
     },
+  });
+}
+
+
+
+export function useCompanyResults(params?: CompanyResultsQuery) {
+  return useQuery({
+    queryKey: ["results", "company", params],
+    queryFn: () => getCompanyResults(params),
+    staleTime: 60 * 1000,
   });
 }

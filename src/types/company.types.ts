@@ -59,3 +59,5 @@ export interface UpdateCompanyStatusPayload {
   status: "APPROVED" | "REJECTED";
   reviewNote?: string;
 }
+
+

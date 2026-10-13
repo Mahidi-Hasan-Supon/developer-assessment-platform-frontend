@@ -27,6 +27,8 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Assessment } from "@/types";
+import { AssessmentAvailableLoading } from "./assessment-available-loading";
+import Pagination from "./assessment-available-pagination";
 
 function formatPrice(price: number) {
   if (price === 0) return "Free";
@@ -74,7 +76,7 @@ export default function AvailableAssessments() {
   });
 
   // 2. Sort Assessments
-  const sortedAssessments : any = [...filteredAssessments].sort((a, b) => {
+  const sortedAssessments: any = [...filteredAssessments].sort((a, b) => {
     if (sortBy === "price-low") return (a.price || 0) - (b.price || 0);
     if (sortBy === "price-high") return (b.price || 0) - (a.price || 0);
     if (sortBy === "duration")
@@ -98,8 +100,9 @@ export default function AvailableAssessments() {
 
   if (isPending) {
     return (
-      <div className="flex min-h-[300px] items-center justify-center">
-        <Spinner />
+      <div className="min-h-[300px] items-center justify-center">
+        {/* <Spinner /> */}
+        <AssessmentAvailableLoading />
       </div>
     );
   }
@@ -262,7 +265,7 @@ export default function AvailableAssessments() {
         /* Assessment cards */
         <div className="space-y-8">
           <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-            {paginatedAssessments.map((assessment : Assessment) => (
+            {paginatedAssessments.map((assessment: Assessment) => (
               <Card
                 key={assessment.id}
                 className="group flex h-full flex-col overflow-hidden border-border/70 bg-card shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-primary/30 hover:shadow-lg"
@@ -345,10 +348,7 @@ export default function AvailableAssessments() {
 
                   {/* View assessment button */}
                   <div className="mt-auto border-t border-border/70 pt-4">
-                    <Button
-                      
-                      className="w-full font-semibold shadow-sm transition-all hover:shadow-md"
-                    >
+                    <Button className="w-full font-semibold shadow-sm transition-all hover:shadow-md">
                       <Link href={`/assessments/${assessment.id}`}>
                         View Assessment
                       </Link>
@@ -412,6 +412,11 @@ export default function AvailableAssessments() {
           )}
         </div>
       )}
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={setCurrentPage}
+      />
     </div>
   );
 }

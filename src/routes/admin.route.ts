@@ -10,7 +10,7 @@ export const adminRoutes = [
       },
       {
         title: "Users-Management",
-        url: `${adminPrefix}/user-management`,
+        url: `${adminPrefix}/user`,
       },
       {
         title: "Approve Company",

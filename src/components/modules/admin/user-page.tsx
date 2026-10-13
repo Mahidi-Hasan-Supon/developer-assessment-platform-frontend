@@ -33,6 +33,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { CandidatesLoading } from "./user-page-loading";
 
 export default function CandidatesManagementPage() {
   const [search, setSearch] = useState("");
@@ -62,19 +63,26 @@ export default function CandidatesManagementPage() {
   const candidates = response?.data ?? [];
   const meta = response?.meta;
 
+  // ডায়নামিক স্কেলিটন কাউন্ট (১০টির জায়গায় রিয়েল ডেটার কাউন্ট দেখাবে)
+  const skeletonCount =
+    candidates.length > 0
+      ? candidates.length
+      : meta?.total && meta.total < limit
+        ? meta.total
+        : 2;
+
   const handleSearch = (value: string) => {
     setSearch(value);
     setPage(1);
   };
 
-  const handleStatusFilter = (
-  value: "ALL" | UserStatus | null,
-) => {
-  if (value === null) return;
+  const handleStatusFilter = (value: "ALL" | UserStatus | null) => {
+    if (value === null) return;
 
-  setStatus(value);
-  setPage(1);
-};
+    setStatus(value);
+    setPage(1);
+  };
+
   const handleToggleStatus = (
     id: string,
     name: string,
@@ -132,9 +140,9 @@ export default function CandidatesManagementPage() {
             <Users className="h-5 w-5 text-muted-foreground" />
           </div>
 
-          <p className="mt-3 text-3xl font-bold">
+          <div className="mt-3 text-3xl font-bold">
             {isPending ? <Skeleton className="h-9 w-20" /> : (meta?.total ?? 0)}
-          </p>
+          </div>
         </div>
 
         <div className="rounded-xl border bg-card p-5">
@@ -143,13 +151,15 @@ export default function CandidatesManagementPage() {
             <ShieldCheck className="h-5 w-5 text-muted-foreground" />
           </div>
 
-          <p className="mt-3 text-3xl font-bold">
+          <div className="mt-3 text-3xl font-bold">
             {isPending ? (
-              <Skeleton className="h-9 w-20" />
+              <div>
+                <Skeleton className="h-9 w-20" />
+              </div>
             ) : (
               `${meta?.page ?? 1} / ${meta?.totalPages ?? 0}`
             )}
-          </p>
+          </div>
         </div>
       </div>
 
@@ -220,28 +230,7 @@ export default function CandidatesManagementPage() {
 
                 <TableBody>
                   {isPending ? (
-                    Array.from({ length: 5 }, (_, index) => (
-                      <TableRow key={`candidate-skeleton-${index}`}>
-                        <TableCell>
-                          <div className="space-y-2">
-                            <Skeleton className="h-4 w-32" />
-                            <Skeleton className="h-3 w-44" />
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <Skeleton className="h-5 w-20" />
-                        </TableCell>
-                        <TableCell>
-                          <Skeleton className="h-5 w-16" />
-                        </TableCell>
-                        <TableCell>
-                          <Skeleton className="h-4 w-24" />
-                        </TableCell>
-                        <TableCell>
-                          <Skeleton className="ml-auto h-8 w-24" />
-                        </TableCell>
-                      </TableRow>
-                    ))
+                    <CandidatesLoading count={skeletonCount} />
                   ) : candidates.length === 0 ? (
                     <TableRow>
                       <TableCell colSpan={5} className="h-32 text-center">
