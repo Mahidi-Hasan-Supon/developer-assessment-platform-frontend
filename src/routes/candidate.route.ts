@@ -1,3 +1,5 @@
+import { title } from "process";
+
 // const candidatePrefix = "/candidate";
 
 // export const candidateRoutes = [
@@ -8,18 +10,23 @@
 //         title: "Overview",
 //         url: candidatePrefix,
 //       },
-//       // {
-//       //   title: "Available Assessments",
-//       //   url: `${candidatePrefix}/assessments`,
-//       // },
-//       // {
-//       //   title: "My Assessments",
-//       //   url: `${candidatePrefix}/my-assessments`,
-//       // },
-//       // {
-//       //   title: "Invitations",
-//       //   url: `${candidatePrefix}/invitations`,
-//       // },
+//     ],
+//   },
+//   {
+//     title: "Assessments",
+//     items: [
+//       {
+//         title: "Available Assessments",
+//         url: `${candidatePrefix}/assessments`,
+//       },
+//       {
+//         title: "My Assessments",
+//         url: `${candidatePrefix}/my-assessments`,
+//       },
+//       {
+//         title: "Invitations",
+//         url: `${candidatePrefix}/invitations`,
+//       },
 //     ],
 //   },
 //   {
@@ -51,7 +58,7 @@
 // ];
 
 const candidatePrefix = "/candidate";
- 
+
 export const candidateRoutes = [
   {
     title: "Dashboard",
@@ -63,11 +70,29 @@ export const candidateRoutes = [
     ],
   },
   {
+    title:"Assessments",
+    items:[
+      {
+        title:"Available Assessment",
+        url:`/assessments`
+      },
+      {
+        title:"Invitations",
+        url:`${candidatePrefix}/invitations`
+      }
+    ]
+  },
+  {
     title: "My Activity",
     items: [
-     
-     
-      
+      {
+        title:"Attempt",
+        url:`${candidatePrefix}/attempt`
+      },
+      {
+        title:"My submission",
+        url:`${candidatePrefix}/submission`
+      },
       {
         title: "Results",
         url: `${candidatePrefix}/results`,

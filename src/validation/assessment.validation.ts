@@ -1,3 +1,5 @@
+
+
 import { z } from "zod";
 
 export const createAssessmentSchema = z
@@ -12,32 +14,37 @@ export const createAssessmentSchema = z
       .max(500, "Description cannot exceed 500 characters"),
 
     durationMinutes: z
-      .number({
-        error: "Duration is required",
-      })
-      .min(1, "Duration must be at least 1 minute")
-      .max(300, "Duration cannot exceed 300 minutes"),
+      .string()
+      .min(1, "Duration is required")
+      .refine((value) => Number.isInteger(Number(value)) && Number(value) > 0, {
+        message: "Duration must be a positive whole number",
+      }),
 
     totalMarks: z
-      .number({
-        error: "Total marks is required",
-      })
-      .min(1, "Total marks must be at least 1"),
+      .string()
+      .min(1, "Total marks are required")
+      .refine((value) => Number(value) > 0, {
+        message: "Total marks must be greater than 0",
+      }),
 
     passMarks: z
-      .number({
-        error: "Pass marks is required",
-      })
-      .min(1, "Pass marks must be at least 1"),
+      .string()
+      .min(1, "Pass marks are required")
+      .refine((value) => Number(value) >= 0, {
+        message: "Pass marks cannot be negative",
+      }),
 
     price: z
-      .number({
-        error: "Price is required",
-      })
-      .min(0, "Price cannot be negative"),
+      .string()
+      .min(1, "Price is required")
+      .refine((value) => Number(value) >= 0, {
+        message: "Price cannot be negative",
+      }),
   })
-  .refine((data) => data.passMarks <= data.totalMarks, {
-    message: "Pass marks cannot be greater than total marks",
-    path: ["passMarks"],
-  });
-
+  .refine(
+    (data) => Number(data.passMarks) <= Number(data.totalMarks),
+    {
+      message: "Pass marks cannot be greater than total marks",
+      path: ["passMarks"],
+    },
+  );

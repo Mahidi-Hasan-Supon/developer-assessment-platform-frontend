@@ -57,12 +57,12 @@ export const companyRoutes = [
         url: companyPrefix,
       },
       {
-        title: "Assessments",
-        url: `${companyPrefix}/assessments`,
-      },
-      {
         title: "Create Assessment",
         url: `${companyPrefix}/assessments/create`,
+      },
+      {
+        title: "Assessments",
+        url: `${companyPrefix}/assessments`,
       },
       {
         title: "Create Problem",

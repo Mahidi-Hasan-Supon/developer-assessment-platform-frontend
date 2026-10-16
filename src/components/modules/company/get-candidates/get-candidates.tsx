@@ -20,9 +20,9 @@ export default function GetCandidates() {
   const [sheetOpen, setSheetOpen] = useState(false);
 
   // Search changes reset pagination to the first page.
-  useEffect(() => {
-    setPage(1);
-  }, [searchTerm]);
+  // useEffect(() => {
+  //   setPage(1);
+  // }, [searchTerm]);
 
   const params: CandidateQuery = {
     page,
@@ -63,7 +63,7 @@ export default function GetCandidates() {
         <div className="space-y-3">
           {Array.from({ length: 5 }).map((_, index) => (
             <div
-              key={index}
+              key={Number(index)}
               className="h-14 animate-pulse rounded-lg bg-muted"
             />
           ))}

@@ -26,10 +26,10 @@ const CreateAssessmentForm = () => {
     defaultValues: {
       title: "",
       description: "",
-      durationMinutes: 60,
-      totalMarks: 100,
-      passMarks: 40,
-      price: 0,
+      durationMinutes: "",
+      totalMarks: "",
+      passMarks: "",
+      price: "",
     },
     validators: {
       onSubmit: createAssessmentSchema,
@@ -37,11 +37,11 @@ const CreateAssessmentForm = () => {
     onSubmit: ({ value }) => {
       const assessmentData: CreateAssessmentPayload = {
         title: value.title,
-        description: value.description || undefined,
-        durationMinutes: value.durationMinutes,
-        totalMarks: value.totalMarks,
-        passMarks: value.passMarks,
-        price: value.price,
+        description: value.description,
+        durationMinutes: Number(value.durationMinutes),
+        totalMarks: Number(value.totalMarks),
+        passMarks: Number(value.passMarks),
+        price: Number(value.price),
       };
 
       createAssessment(assessmentData, {
@@ -51,7 +51,7 @@ const CreateAssessmentForm = () => {
             description: response.message || "Assessment created successfully.",
             type: "success",
           });
-          router.push(`/company/assessments/${response.data.id}/questions`);
+          router.push(`/company/assessments`);
         },
         onError: (error) => {
           toast.add({
@@ -150,12 +150,13 @@ const CreateAssessmentForm = () => {
                     <Input
                       id={field.name}
                       name={field.name}
+                      placeholder="0"
                       type="number"
                       min={1}
                       value={field.state.value}
                       onBlur={field.handleBlur}
                       onChange={(e) =>
-                        field.handleChange(Number(e.target.value))
+                        field.handleChange((e.target.value))
                       }
                       aria-invalid={isInvalid}
                     />
@@ -179,11 +180,12 @@ const CreateAssessmentForm = () => {
                       id={field.name}
                       name={field.name}
                       type="number"
+                      placeholder="0"
                       min={0}
                       value={field.state.value}
                       onBlur={field.handleBlur}
                       onChange={(e) =>
-                        field.handleChange(Number(e.target.value))
+                        field.handleChange((e.target.value))
                       }
                       aria-invalid={isInvalid}
                     />
@@ -210,11 +212,12 @@ const CreateAssessmentForm = () => {
                       id={field.name}
                       name={field.name}
                       type="number"
+                      placeholder="0"
                       min={1}
                       value={field.state.value}
                       onBlur={field.handleBlur}
                       onChange={(e) =>
-                        field.handleChange(Number(e.target.value))
+                        field.handleChange((e.target.value))
                       }
                       aria-invalid={isInvalid}
                     />
@@ -237,12 +240,13 @@ const CreateAssessmentForm = () => {
                     <Input
                       id={field.name}
                       name={field.name}
+                      placeholder="0"
                       type="number"
                       min={1}
                       value={field.state.value}
                       onBlur={field.handleBlur}
                       onChange={(e) =>
-                        field.handleChange(Number(e.target.value))
+                        field.handleChange((e.target.value))
                       }
                       aria-invalid={isInvalid}
                     />

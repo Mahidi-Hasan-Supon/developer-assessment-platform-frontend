@@ -54,11 +54,50 @@ export default function AssessmentProblemsPage({
   const rows = assessmentProblemsQuery.data?.data ?? [];
   const assessments = assessmentData?.data ?? [];
   const problems = problemData?.data ?? [];
-
+  // const assessmentRows = rows.filter(
+  //   (item) => item.assessmentId === assessmentId,
+  // );
   const handleCreate = (
     assessmentId: string,
     payload: { problemId: string; order: number; marks?: number },
   ) => {
+    const existingProblems = rows.filter(
+      (item) => item.assessmentId === assessmentId,
+    );
+
+    // একই problem এই assessment-এ আগে থেকেই আছে কি না
+    const isDuplicate = existingProblems.some(
+      (item) => item.problemId === payload.problemId,
+    );
+
+    if (isDuplicate) {
+      toast.add({
+        title: "Problem Already Added",
+        description:
+          "This problem has already been added to this assessment. Please select a different problem.",
+        type: "error",
+      });
+      return;
+    }
+
+    // Existing problem marks-এর সঙ্গে নতুন marks যোগ করলে totalMarks ছাড়ায় কি না
+    const currentMarks = existingProblems.reduce(
+      (total, item) => total + (item.marks ?? 0),
+      0,
+    );
+
+    const newMarks = payload.marks ?? 0;
+    const assessment = assessments.find((item) => item.id === assessmentId);
+
+    if (assessment && currentMarks + newMarks > assessment.totalMarks) {
+      toast.add({
+        title: "Assessment Marks Limit Reached",
+        description: `This assessment allows only ${assessment.totalMarks} total marks. Current marks: ${currentMarks}. Please reduce the problem marks or choose another assessment.`,
+        type: "error",
+      });
+      return;
+    }
+
     createMutation.mutate(
       { assessmentId, payload },
       {

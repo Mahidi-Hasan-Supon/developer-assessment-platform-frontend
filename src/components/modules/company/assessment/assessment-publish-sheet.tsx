@@ -12,7 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { toast } from "@/components/ui/toast";
 
-import { useUpdateAssessment } from "@/hook";
+import { useAssessmentProblems, useUpdateAssessment } from "@/hook";
 import type { Assessment } from "@/types/assessment.types";
 
 interface PublishAssessmentSheetProps {
@@ -26,10 +26,45 @@ const PublishAssessmentSheet = ({
   open,
   onOpenChange,
 }: PublishAssessmentSheetProps) => {
+  const {
+    data: problemsResponse,
+    isLoading: isProblemsLoading,
+    isError: isProblemsError,
+  } = useAssessmentProblems(assessment?.id ?? "");
+  const problems = problemsResponse?.data;
   const updateMutation = useUpdateAssessment();
 
   const handlePublish = () => {
     if (!assessment || assessment.status !== "DRAFT") return;
+
+    // jodi problem ta create na kora take
+    if (isProblemsLoading) {
+      toast.add({
+        title: "Please wait",
+        description: "Assessment problems are still loading. Please try again.",
+        type: "error",
+      });
+      return;
+    }
+
+    if (isProblemsError || !problems) {
+      toast.add({
+        title: "Unable to check problems",
+        description: "Could not verify assessment problems. Please try again.",
+        type: "error",
+      });
+      return;
+    }
+
+    if (problems.length === 0) {
+      toast.add({
+        title: "Assessment Problems Required",
+        description:
+          "Please create at least one assessment problem before publishing this assessment.",
+        type: "error",
+      });
+      return;
+    }
 
     updateMutation.mutate(
       {
@@ -150,7 +185,7 @@ const PublishAssessmentSheet = ({
             type="button"
             onClick={handlePublish}
             disabled={
-              updateMutation.isPending || assessment?.status !== "DRAFT"
+              updateMutation.isPending || isProblemsLoading|| assessment?.status !== "DRAFT"
             }
           >
             {updateMutation.isPending && <Spinner />}
