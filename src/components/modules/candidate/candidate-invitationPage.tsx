@@ -159,8 +159,11 @@ export default function CandidateInvitationsPage() {
 
   if (isLoading) {
     return (
-      <div className="space-y-4 p-4 md:p-6">
+      <div className="space-y-4 mx-10 p-4 md:p-6">
         <Skeleton className="h-10 w-64" />
+        <Skeleton className="h-44 w-full rounded-xl" />
+        <Skeleton className="h-44 w-full rounded-xl" />
+        <Skeleton className="h-44 w-full rounded-xl" />
         <Skeleton className="h-44 w-full rounded-xl" />
         <Skeleton className="h-44 w-full rounded-xl" />
       </div>

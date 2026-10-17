@@ -1,8 +1,11 @@
 import apiClient from "@/lib/apiClient";
+import { ApiResponse } from "@/types";
 import type {
   CandidateListParams,
   CandidateListResponse,
+
   CandidateStatusResponse,
+
   UserStatus,
 } from "@/types/user.types";
 
@@ -24,3 +27,6 @@ export function updateCandidateStatus(id: string, status: UserStatus) {
     body: { status },
   });
 }
+
+
+

@@ -3,6 +3,13 @@ import { ProblemType } from "./problem.types";
 
 export type SubmissionStatus = "PENDING" | "EVALUATED";
 
+export interface MySubmissionsMeta {
+  page?: number;
+  limit?: number;
+  total?: number;
+  status?:string;
+  totalPages?: number;
+}
 
 export interface SubmissionProblem {
   id: string;
@@ -50,4 +57,26 @@ export interface CompanySubmission {
 
 export interface EvaluateAnswerPayload {
   marks: number;
+}
+
+export interface MySubmission {
+  id: string;
+  status: SubmissionStatus;
+  totalMarks: number;
+  obtainedMarks: number;
+  createdAt: string;
+  evaluatedAt: string | null;
+  attempt: {
+    id: string;
+    candidateId: string;
+    submittedAt?: string | null;
+    assessmentId: string;
+    assessment: {
+      id: string;
+      title: string;
+      description?: string | null;
+      totalMarks: number;
+      passMarks: number;
+    };
+  };
 }

@@ -2,7 +2,7 @@ import AvailableAssessments from "@/components/modules/candidate/assessment-avai
 
 
 export default function CandidateAssessmentsDashboardPage() {
-  return <div className="mx-10 py-10">
+  return <div className="mx-10 py-10 my-20">
     <AvailableAssessments />
   </div>;
 }

@@ -1,10 +1,17 @@
 import { evaluateAnswer, getCompanySubmissions, getMySubmissions, getSubmissionAnswers } from "@/api/submission.api";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
-export function useMySubmissions() {
+// export function useMySubmissions() {
+//   return useQuery({
+//     queryKey: ["my-submissions"],
+//     queryFn: () => getMySubmissions({ page: 1, limit: 20 }),
+//   });
+// }
+
+export function useMySubmissions(page = 1, limit = 20) {
   return useQuery({
-    queryKey: ["my-submissions"],
-    queryFn: () => getMySubmissions({ page: 1, limit: 20 }),
+    queryKey: ["my-submissions", page, limit],
+    queryFn: () => getMySubmissions({ page, limit }),
   });
 }
 

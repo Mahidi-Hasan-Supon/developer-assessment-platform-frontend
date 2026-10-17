@@ -7,4 +7,5 @@ export * from "./attempt.types"
 export * from "./result.types"
 export * from "./submission.types"
 export * from "./user.types"
+export * from "./candidate.types"
 

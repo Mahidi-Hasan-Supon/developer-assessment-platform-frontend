@@ -53,3 +53,4 @@ export interface ResetPasswordPayload {
 export interface ResendForgotPasswordOtpPayload {
   email: string;
 }
+

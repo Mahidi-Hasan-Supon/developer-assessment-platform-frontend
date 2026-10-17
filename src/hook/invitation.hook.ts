@@ -44,10 +44,12 @@ export function useCreateInvitation() {
 }
 
 // Get candidate's own invitations
-export function useMyInvitations(params: InvitationQuery = {}) {
+export function useMyInvitations(params: InvitationQuery = {} , enabled = true) {
   return useQuery({
     queryKey: invitationKeys.my(params),
     queryFn: () => getMyInvitations(params),
+    enabled,
+    retry:true
   });
 }
 

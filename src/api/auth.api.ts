@@ -1,5 +1,7 @@
 import apiClient from "@/lib/apiClient";
 import {
+  ApiResponse,
+  CandidateProfile,
   ForgotPasswordPayload,
   GoogleLoginPayload,
   LoginPayload,
@@ -7,6 +9,7 @@ import {
   ResendForgotPasswordOtpPayload,
   ResendVerificationOtpPayload,
   ResetPasswordPayload,
+  UpdateCandidateProfilePayload,
   VerifyEmailPayload,
 } from "@/types";
 
@@ -102,5 +105,6 @@ export const resendForgotPasswordOtp = async (
     body: payload,
   });
 };
+
 
 

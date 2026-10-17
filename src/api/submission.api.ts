@@ -3,16 +3,28 @@ import {
   ApiResponse,
   CompanySubmission,
   EvaluateAnswerPayload,
+  MySubmission,
   ResultItem,
   SubmissionAnswer,
 } from "@/types";
+
+// export function getMySubmissions(params?: {
+//   page?: number;
+//   limit?: number;
+//   status?: string;
+// }) {
+//   return apiClient("/submission/my", {
+//     method: "GET",
+//     query: params,
+//   });
+// }
 
 export function getMySubmissions(params?: {
   page?: number;
   limit?: number;
   status?: string;
 }) {
-  return apiClient("/submission/my", {
+  return apiClient<ApiResponse<MySubmission[]>>("/submission/my", {
     method: "GET",
     query: params,
   });
@@ -44,4 +56,3 @@ export function evaluateAnswer(
     },
   );
 }
-

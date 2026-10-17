@@ -1,110 +1,231 @@
 "use client";
+
 import Logo from "@/asserts/svg/logo";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/toast";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { useGetMe, useLogOut } from "@/hook";
 import { UserRole } from "@/types";
 import { useQueryClient } from "@tanstack/react-query";
+import {
+  ChevronDown,
+  LayoutDashboard,
+  LogOut,
+  UserRound,
+  UserRoundCheck,
+  House,
+  ClipboardCheck,
+  Info,
+  Mail,
+} from "lucide-react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
+import ThemeToggle from "./themeToggle";
+
+const routes = [
+  { name: "Home", url: "/", icon: House },
+  { name: "Assessment", url: "/assessments", icon: ClipboardCheck },
+  { name: "About us", url: "/about-us", icon: Info },
+  { name: "Contact", url: "/contract", icon: Mail },
+];
+
+const dashboardRoute: Record<UserRole, string> = {
+  CANDIDATE: "/candidate",
+  COMPANY: "/company",
+  ADMIN: "/admin",
+};
+
+const profileRoute: Record<UserRole, string> = {
+  CANDIDATE: "/candidate/profile",
+  COMPANY: "/company/profile",
+  ADMIN: "/admin/profile",
+};
+
+const roleLabel: Record<UserRole, string> = {
+  CANDIDATE: "Candidate",
+  COMPANY: "Company",
+  ADMIN: "Administrator",
+};
 
 const Header = () => {
+  const pathname = usePathname();
   const queryClient = useQueryClient();
-  const routes = [
-    { name: "Home", url: "/" },
-    { name: "Assessment", url: "/assessments" },
-    { name: "About us", url: "/about-us" },
-    { name: "Contract", url: "/contract" },
-  ];
-
-  const dashboardRoute: Record<UserRole, string> = {
-    CANDIDATE: "/candidate",
-    COMPANY: "/company",
-    ADMIN: "/admin",
-  };
 
   const { data, isLoading } = useGetMe();
-  const { mutate: logout } = useLogOut();
+  const { mutate: logout, isPending: isLoggingOut } = useLogOut();
+
   const user = data?.data;
-  const role: UserRole = !!data?.data && data?.data.role;
-  
+  const role = user?.role as UserRole | undefined;
+
   const handleLogout = () => {
     logout(undefined, {
-      onSuccess: (res) => {
+      onSuccess: () => {
+        queryClient.removeQueries({ queryKey: ["user"] });
+
         toast.add({
-          title: "Tata",
-          description: "Logout successfully",
+          title: "Logged out",
+          description: "You have logged out successfully.",
           type: "success",
         });
-        queryClient.removeQueries({ queryKey: ["user"] });
       },
       onError: (err) => {
         toast.add({
-          title: "Logout error",
-          description: err.message || "Something went wrong. Please try again",
+          title: "Logout failed",
+          description: err.message || "Something went wrong. Please try again.",
           type: "error",
         });
       },
     });
   };
 
+  const initial = user?.name?.trim()?.charAt(0)?.toUpperCase() || "U";
+
   return (
-    <header className="border-b bg-background w-full sticky top-0 z-50">
-      <div className="container mx-auto flex flex-wrap md:flex-nowrap min-h-16 items-center justify-between px-4 sm:px-6 lg:px-8 py-3 md:py-0">
+    <header className="sticky top-0 z-50 w-full border-b border-border/70 bg-background/95 backdrop-blur-md">
+      <div className="container mx-auto flex min-h-16 flex-wrap items-center justify-between gap-x-4 px-4 py-3 sm:px-6 md:flex-nowrap md:py-0 lg:px-8">
+        {/* Logo: unchanged */}
         <Link
           href="/"
-          className="text-xl font-bold tracking-tight text-foreground whitespace-nowrap"
+          aria-label="DevAssess home"
+          className="flex shrink-0 items-center gap-2 text-xl font-bold tracking-tight text-foreground"
         >
-          <div className="flex items-center gap-2">
-            <Logo />
-            <span>DevAssess</span>
-          </div>
+          <Logo />
+          <span>DevAssess</span>
         </Link>
 
-        {/* এখানে gap কমানো হয়েছে: gap-2 sm:gap-4 md:gap-6 */}
-        <nav className="flex items-center justify-center order-3 md:order-none w-full md:w-auto mt-3 md:mt-0 gap-1 sm:gap-4 md:gap-6 lg:gap-8 text-xs sm:text-sm font-medium overflow-x-auto py-1">
-          {routes.map((route) => (
-            <Link
-              href={route.url}
-              key={route.url}
-              className="text-muted-foreground transition-colors hover:text-foreground whitespace-nowrap px-1 sm:px-0"
-            >
-              {route.name}
-            </Link>
-          ))}
-          {role && (
-            <Link
-              href={dashboardRoute[role]}
-              className="text-muted-foreground transition-colors hover:text-foreground whitespace-nowrap px-1 sm:px-0"
-            >
-              Dashboard
-            </Link>
-          )}
+        {/* Navigation */}
+        <nav
+          aria-label="Main navigation"
+          className="order-3 flex w-full items-center justify-start gap-1 overflow-x-auto py-2 text-xs font-medium sm:justify-center sm:text-sm md:order-none md:w-auto md:py-0"
+        >
+          {routes.map((route) => {
+            const isActive =
+              route.url === "/"
+                ? pathname === "/"
+                : pathname === route.url ||
+                  pathname.startsWith(`${route.url}/`);
+
+            const Icon = route.icon;
+
+            return (
+              <Link
+                href={route.url}
+                key={route.url}
+                aria-current={isActive ? "page" : undefined}
+                className={`inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-lg px-3 py-2 transition-all duration-200 sm:gap-2 sm:px-3.5 ${
+                  isActive
+                    ? "bg-primary font-semibold text-primary-foreground shadow-sm shadow-primary/20"
+                    : "text-muted-foreground hover:bg-primary/10 hover:text-primary"
+                }`}
+              >
+                <Icon className="size-4 shrink-0" />
+                <span>{route.name}</span>
+              </Link>
+            );
+          })}
         </nav>
 
-        <div className="flex items-center gap-2 sm:gap-4">
+        {/* Actions */}
+        <div className="flex shrink-0 items-center gap-2 sm:gap-3">
+          <ThemeToggle />
+
           {!isLoading && !user && (
             <Button
-              variant="outline"
-              render={<Link href="/login">Login</Link>}
+              variant="default"
+              className="h-9 px-4"
+              render={<Link href="/login" />}
               nativeButton={false}
-              className="h-8 px-3 text-xs sm:h-9 sm:px-4 sm:text-sm"
             >
               Login
             </Button>
           )}
-          {!isLoading && user && (
-            <div className="flex items-center gap-2 sm:gap-3">
-              <span className="hidden sm:inline-block text-xs sm:text-sm font-medium text-muted-foreground max-w-[100px] lg:max-w-[150px] truncate">
-                {user?.name || "User"}
-              </span>
-              <Button
-                onClick={handleLogout}
-                variant="destructive"
-                className="h-8 px-3 text-xs sm:h-9 sm:px-4 sm:text-sm"
+
+          {!isLoading && user && role && (
+            <DropdownMenu>
+              <DropdownMenuTrigger
+                render={
+                  <Button
+                    variant="outline"
+                    className="h-10 gap-2 rounded-full border-border/80 px-2 sm:pr-3"
+                    aria-label="Open profile menu"
+                  />
+                }
               >
-                Logout
-              </Button>
-            </div>
+                <span className="flex size-8 items-center justify-center rounded-full bg-primary text-sm font-semibold text-primary-foreground">
+                  {initial}
+                </span>
+
+                <span className="hidden max-w-28 truncate text-sm font-medium sm:inline">
+                  {user.name || "My account"}
+                </span>
+
+                <ChevronDown className="hidden size-4 text-muted-foreground sm:block" />
+              </DropdownMenuTrigger>
+
+              <DropdownMenuContent
+                align="end"
+                sideOffset={8}
+                className="w-64 rounded-xl border-border/80 p-2 shadow-lg"
+              >
+                <DropdownMenuGroup>
+                  <DropdownMenuLabel className="px-2 py-3 font-normal">
+                    <div className="flex items-center gap-3">
+                      <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
+                        <UserRound className="size-5" />
+                      </div>
+
+                      <div className="min-w-0 flex-1">
+                        <p className="truncate text-sm font-semibold text-foreground">
+                          {user.name || "My account"}
+                        </p>
+                        <p className="mt-1 text-xs text-muted-foreground">
+                          {roleLabel[role]}
+                        </p>
+                      </div>
+                    </div>
+                  </DropdownMenuLabel>
+                </DropdownMenuGroup>
+
+                <DropdownMenuSeparator />
+
+                <DropdownMenuGroup>
+                  <DropdownMenuItem
+                    render={<Link href={dashboardRoute[role]} />}
+                    className="cursor-pointer gap-2 rounded-lg py-2.5"
+                  >
+                    <LayoutDashboard className="size-4 text-muted-foreground" />
+                    Dashboard
+                  </DropdownMenuItem>
+
+                  <DropdownMenuItem
+                    render={<Link href={profileRoute[role]} />}
+                    className="cursor-pointer gap-2 rounded-lg py-2.5"
+                  >
+                    <UserRoundCheck className="size-4 text-muted-foreground" />
+                    My Profile
+                  </DropdownMenuItem>
+                </DropdownMenuGroup>
+
+                <DropdownMenuSeparator />
+
+                <DropdownMenuItem
+                  disabled={isLoggingOut}
+                  onClick={handleLogout}
+                  className="cursor-pointer gap-2 rounded-lg py-2.5 text-destructive focus:text-destructive"
+                >
+                  <LogOut className="size-4" />
+                  {isLoggingOut ? "Logging out..." : "Logout"}
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           )}
         </div>
       </div>

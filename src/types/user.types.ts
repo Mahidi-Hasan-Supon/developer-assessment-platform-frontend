@@ -35,3 +35,5 @@ export interface CandidateStatusResponse {
     updatedAt: string;
   };
 }
+
+

@@ -1,16 +1,19 @@
 import {
   forgotPasswordUser,
   getMeUser,
+  getMyCandidateProfile,
   googleLoginUser,
   loginUser,
   registerUser,
   resendForgotPasswordOtp,
   resendVerificationOtp,
   resetPasswordUser,
+  updateMyCandidateProfile,
   userLogOut,
   verifyEmailUser,
 } from "@/api";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { UpdateCandidateProfilePayload } from "@/types";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export const useRegister = () => {
   return useMutation({
@@ -78,5 +81,6 @@ export const useResendForgotPasswordOtp = () => {
     mutationFn: resendForgotPasswordOtp,
   });
 };
+
 
 
