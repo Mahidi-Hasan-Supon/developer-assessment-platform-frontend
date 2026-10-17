@@ -30,6 +30,7 @@ import {
 } from "@/components/ui/card";
 import type { Assessment } from "@/types";
 import { AssessmentAvailableLoading } from "./assessment-available-loading";
+import Pagination from "./assessment-available-pagination";
 
 function formatPrice(price: number) {
   if (price === 0) return "Free";
@@ -163,7 +164,7 @@ export default function AvailableAssessments() {
   >("newest");
   const [currentPage, setCurrentPage] = useState(1);
 
-  const itemsPerPage = 6;
+  const itemsPerPage = 3;
 
   const {
     data: response,
@@ -495,6 +496,20 @@ export default function AvailableAssessments() {
             </div>
           )}
         </>
+      )}
+
+      {sortedAssessments.length > 0 && (
+        <div className="mt-10 flex flex-col items-center gap-4">
+          <p className="text-sm text-muted-foreground">
+            Page {currentPage} of {totalPages}
+          </p>
+
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={setCurrentPage}
+          />
+        </div>
       )}
     </div>
   );

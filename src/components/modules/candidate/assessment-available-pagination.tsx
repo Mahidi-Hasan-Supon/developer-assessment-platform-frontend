@@ -1,13 +1,46 @@
 "use client";
 
-import { ChevronLeft, ChevronRight, MoreHorizontal } from "lucide-react";
-
 import { Button } from "@/components/ui/button";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
-interface PaginationProps {
+type PaginationProps = {
   currentPage: number;
   totalPages: number;
   onPageChange: (page: number) => void;
+};
+
+type PageItem = number | "left-ellipsis" | "right-ellipsis";
+
+function getPageItems(currentPage: number, totalPages: number): PageItem[] {
+  if (totalPages <= 7) {
+    return Array.from({ length: totalPages }, (_, i) => i + 1);
+  }
+
+  if (currentPage <= 4) {
+    return [1, 2, 3, 4, 5, "right-ellipsis", totalPages];
+  }
+
+  if (currentPage >= totalPages - 3) {
+    return [
+      1,
+      "left-ellipsis",
+      totalPages - 4,
+      totalPages - 3,
+      totalPages - 2,
+      totalPages - 1,
+      totalPages,
+    ];
+  }
+
+  return [
+    1,
+    "left-ellipsis",
+    currentPage - 1,
+    currentPage,
+    currentPage + 1,
+    "right-ellipsis",
+    totalPages,
+  ];
 }
 
 export default function Pagination({
@@ -17,78 +50,61 @@ export default function Pagination({
 }: PaginationProps) {
   if (totalPages <= 1) return null;
 
-  const getPages = () => {
-    const pages: (number | "ellipsis")[] = [];
-
-    if (totalPages <= 5) {
-      return Array.from({ length: totalPages }, (_, i) => i + 1);
-    }
-
-    pages.push(1);
-
-    if (currentPage > 3) {
-      pages.push("ellipsis");
-    }
-
-    const start = Math.max(2, currentPage - 1);
-    const end = Math.min(totalPages - 1, currentPage + 1);
-
-    for (let page = start; page <= end; page++) {
-      pages.push(page);
-    }
-
-    if (currentPage < totalPages - 2) {
-      pages.push("ellipsis");
-    }
-
-    pages.push(totalPages);
-
-    return pages;
-  };
+  const pageItems = getPageItems(currentPage, totalPages);
 
   return (
     <nav
-      aria-label="Assessment pagination"
+      aria-label="Pagination"
       className="flex flex-wrap items-center justify-center gap-2"
     >
       <Button
+        type="button"
         variant="outline"
         size="icon"
         aria-label="Previous page"
-        disabled={currentPage === 1}
+        disabled={currentPage <= 1}
         onClick={() => onPageChange(currentPage - 1)}
       >
         <ChevronLeft className="size-4" />
       </Button>
 
-      {getPages().map((page, index) =>
-        page === "ellipsis" ? (
-          <span
-            key={`ellipsis-${Number(index)}`}
-            className="flex size-9 items-center justify-center text-muted-foreground"
-            aria-hidden="true"
-          >
-            <MoreHorizontal className="size-4" />
-          </span>
-        ) : (
+      {pageItems.map((item, index) => {
+        if (typeof item !== "number") {
+          return (
+            <span
+              key={`${item}-${Number(index)}`}
+              aria-hidden="true"
+              className="flex size-9 items-center justify-center text-muted-foreground"
+            >
+              ...
+            </span>
+          );
+        }
+
+        const isActive = item === currentPage;
+
+        return (
           <Button
-            key={page}
-            variant={currentPage === page ? "default" : "outline"}
+            key={item}
+            type="button"
+            variant={isActive ? "default" : "outline"}
             size="icon"
-            aria-label={`Page ${page}`}
-            aria-current={currentPage === page ? "page" : undefined}
-            onClick={() => onPageChange(page)}
+            aria-label={`Page ${item}`}
+            aria-current={isActive ? "page" : undefined}
+            onClick={() => onPageChange(item)}
+            className="tabular-nums"
           >
-            {page}
+            {item}
           </Button>
-        ),
-      )}
+        );
+      })}
 
       <Button
+        type="button"
         variant="outline"
         size="icon"
         aria-label="Next page"
-        disabled={currentPage === totalPages}
+        disabled={currentPage >= totalPages}
         onClick={() => onPageChange(currentPage + 1)}
       >
         <ChevronRight className="size-4" />
