@@ -1,4 +1,3 @@
-
 "use client";
 
 import Link from "next/link";
@@ -74,21 +73,13 @@ export default function AssessmentDetailsPage() {
     refetch: refetchProblems,
   } = useAssessmentProblems(assessmentId);
 
-  const {
-    data: userResponse,
-    isPending: userPending,
-  } = useGetMe();
+  const { data: userResponse, isPending: userPending } = useGetMe();
 
   const currentUser = userResponse?.data;
   const isLoggedIn = Boolean(currentUser);
 
-  const {
-    data: invitationResponse,
-    isPending: invitationsPending,
-  } = useMyInvitations(
-    { page: 1, limit: 100 },
-    !userPending && isLoggedIn,
-  );
+  const { data: invitationResponse, isPending: invitationsPending } =
+    useMyInvitations({ page: 1, limit: 100 }, !userPending && isLoggedIn);
 
   const assessment = response?.data;
 
@@ -103,14 +94,16 @@ export default function AssessmentDetailsPage() {
   const hasInvitation = Boolean(assessmentInvitation);
   const isInvitationAccepted = assessmentInvitation?.status === "ACCEPTED";
   const isInvitationPending = assessmentInvitation?.status === "PENDING";
- 
+
   const assessmentProblems = problemsResponse?.data ?? [];
 
   const handleViewInvitation = () => {
     if (userPending) return;
 
     if (!isLoggedIn) {
-      router.push(`/login?redirect=${encodeURIComponent(`/assessments/${assessmentId}`)}`);
+      router.push(
+        `/login?redirect=${encodeURIComponent(`/assessments/${assessmentId}`)}`,
+      );
       return;
     }
 
@@ -129,9 +122,7 @@ export default function AssessmentDetailsPage() {
   };
 
   if (isPending) {
-    return (
-      <Loading/>
-    );
+    return <Loading />;
   }
   // if (isPending) {
   //   return (
@@ -144,7 +135,7 @@ export default function AssessmentDetailsPage() {
   if (isError || !assessment) {
     return (
       <div className="mx-auto max-w-3xl space-y-5 px-4 py-10">
-        <Button  variant="ghost">
+        <Button variant="ghost">
           <Link href="/assessments">
             <ArrowLeft className="mr-2 size-4" />
             Back to assessments
@@ -170,7 +161,7 @@ export default function AssessmentDetailsPage() {
                 Try again
               </Button>
 
-              <Button  variant="outline">
+              <Button variant="outline">
                 <Link href="/assessments">Browse assessments</Link>
               </Button>
             </div>
@@ -184,7 +175,7 @@ export default function AssessmentDetailsPage() {
     <main className="min-h-screen bg-muted/20">
       <div className="mx-auto max-w-6xl space-y-7 px-4 py-6 pb-12 sm:px-6 lg:px-8">
         {/* Back navigation */}
-        <Button  variant="ghost" className="-ml-3">
+        <Button variant="ghost" className="-ml-3">
           <Link href="/assessments">
             <ArrowLeft className="mr-2 size-4" />
             All assessments
@@ -289,6 +280,61 @@ export default function AssessmentDetailsPage() {
           />
         </section>
 
+        {/* Company Information */}
+        <Card className="border-border/70 shadow-sm">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-xl">
+              <Building2 className="size-5 text-primary" />
+              About the Company
+            </CardTitle>
+
+            <CardDescription>
+              Information about the company offering this assessment.
+            </CardDescription>
+          </CardHeader>
+
+          <CardContent>
+            <div className="space-y-4">
+              <div>
+                <h3 className="font-semibold">
+                  {assessment.company?.companyProfile?.companyName ??
+                    "Company information unavailable"}
+                </h3>
+
+                {assessment.company?.companyProfile?.industry && (
+                  <p className="text-sm text-muted-foreground">
+                    {assessment.company.companyProfile.industry}
+                  </p>
+                )}
+              </div>
+
+              {assessment.company?.companyProfile?.description && (
+                <p className="text-sm leading-6 text-muted-foreground">
+                  {assessment.company.companyProfile.description}
+                </p>
+              )}
+
+              {assessment.company?.companyProfile?.location && (
+                <p className="text-sm text-muted-foreground">
+                  Location: {assessment.company.companyProfile.location}
+                </p>
+              )}
+
+              {assessment.company?.companyProfile?.website && (
+                <a
+                  href={assessment.company.companyProfile.website}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex text-sm font-medium text-primary underline-offset-4 hover:underline"
+                >
+                  Visit company website
+                  <ArrowRight className="ml-1 size-4" />
+                </a>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+
         {/* Problem preview */}
         <Card className="border-border/70 shadow-sm">
           <CardHeader className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -298,9 +344,7 @@ export default function AssessmentDetailsPage() {
               </div>
 
               <div className="space-y-1">
-                <CardTitle className="text-xl">
-                  Assessment problems
-                </CardTitle>
+                <CardTitle className="text-xl">Assessment problems</CardTitle>
                 <CardDescription className="leading-6">
                   Preview the question types, difficulty levels, and marks.
                 </CardDescription>
@@ -439,10 +483,7 @@ export default function AssessmentDetailsPage() {
 
             <Button
               className="w-full shrink-0 sm:w-auto"
-              disabled={
-                userPending ||
-                (isLoggedIn && invitationsPending)
-              }
+              disabled={userPending || (isLoggedIn && invitationsPending)}
               onClick={handleViewInvitation}
             >
               {userPending ? (
@@ -509,9 +550,7 @@ function MetricCard({
         <div className="min-w-0">
           <p className="text-sm text-muted-foreground">{label}</p>
           <p className="break-words text-xl font-bold sm:text-2xl">{value}</p>
-          {suffix && (
-            <p className="text-xs text-muted-foreground">{suffix}</p>
-          )}
+          {suffix && <p className="text-xs text-muted-foreground">{suffix}</p>}
         </div>
       </CardContent>
     </Card>

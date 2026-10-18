@@ -158,6 +158,18 @@ function AssessmentCard({
 export default function AvailableAssessments() {
   const reduceMotion = useReducedMotion();
 
+  const [priceFilter, setPriceFilter] = useState<"all" | "free" | "paid">(
+    "all",
+  );
+
+  const [durationFilter, setDurationFilter] = useState<
+    "all" | "short" | "medium" | "long"
+  >("all");
+
+  const [dateFilter, setDateFilter] = useState<
+    "all" | "7days" | "30days" | "90days"
+  >("all");
+
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState<
     "newest" | "price-low" | "price-high" | "duration"
@@ -184,21 +196,56 @@ export default function AvailableAssessments() {
 
   const sortedAssessments = useMemo(() => {
     const query = searchQuery.trim().toLowerCase();
+    const now = Date.now();
 
     const filtered = rawAssessments.filter((assessment) => {
+      // Search filter
       const title = assessment.title?.toLowerCase() ?? "";
       const description = assessment.description?.toLowerCase() ?? "";
 
-      return title.includes(query) || description.includes(query);
+      const matchesSearch =
+        title.includes(query) || description.includes(query);
+
+      // Price filter
+      const matchesPrice =
+        priceFilter === "all" ||
+        (priceFilter === "free" && assessment.price === 0) ||
+        (priceFilter === "paid" && assessment.price > 0);
+
+      // Duration filter
+      const duration = assessment.durationMinutes;
+
+      const matchesDuration =
+        durationFilter === "all" ||
+        (durationFilter === "short" && duration < 30) ||
+        (durationFilter === "medium" && duration >= 30 && duration <= 60) ||
+        (durationFilter === "long" && duration > 60);
+
+      // Created date filter
+      const createdAt = new Date(assessment.createdAt).getTime();
+
+      const dateRanges = {
+        "7days": 7,
+        "30days": 30,
+        "90days": 90,
+      } as const;
+
+      const matchesDate =
+        dateFilter === "all" ||
+        (Number.isFinite(createdAt) &&
+          createdAt >= now - dateRanges[dateFilter] * 24 * 60 * 60 * 1000 &&
+          createdAt <= now);
+
+      return matchesSearch && matchesPrice && matchesDuration && matchesDate;
     });
 
-    return [...filtered].sort((a, b) => {
+    return filtered.sort((a, b) => {
       if (sortBy === "price-low") {
-        return (a.price ?? 0) - (b.price ?? 0);
+        return a.price - b.price;
       }
 
       if (sortBy === "price-high") {
-        return (b.price ?? 0) - (a.price ?? 0);
+        return b.price - a.price;
       }
 
       if (sortBy === "duration") {
@@ -207,7 +254,14 @@ export default function AvailableAssessments() {
 
       return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
     });
-  }, [rawAssessments, searchQuery, sortBy]);
+  }, [
+    rawAssessments,
+    searchQuery,
+    sortBy,
+    priceFilter,
+    durationFilter,
+    dateFilter,
+  ]);
 
   const totalPages = Math.ceil(sortedAssessments.length / itemsPerPage);
   const safeTotalPages = Math.max(totalPages, 1);
@@ -284,7 +338,7 @@ export default function AvailableAssessments() {
       </div>
 
       {/* Summary cards */}
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
         <Card className="rounded-2xl border-border/80 bg-card shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md">
           <CardContent className="flex items-center gap-4 p-5">
             <div className="rounded-xl bg-primary/10 p-3 text-primary">
@@ -329,47 +383,152 @@ export default function AvailableAssessments() {
         </Card>
       </div>
 
-      {/* Search and sort */}
-      <div className="flex flex-col gap-4 rounded-2xl border border-border/80 bg-card p-4 shadow-sm sm:flex-row sm:items-center sm:justify-between">
-        <div className="relative w-full sm:max-w-sm">
-          <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+      {/* Search, filters and sort */}
+      <div className="space-y-4 rounded-2xl border border-border/80 bg-card p-4 shadow-sm">
+        <div className="flex flex-col gap-3 lg:flex-row">
+          {/* Search */}
+          <div className="relative w-full lg:flex-1">
+            <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
 
-          <Input
-            placeholder="Search assessments..."
-            value={searchQuery}
-            onChange={(event) => {
-              setSearchQuery(event.target.value);
-              setCurrentPage(1);
-            }}
-            className="h-11 rounded-xl pl-9"
-          />
+            <Input
+              placeholder="Search assessments..."
+              value={searchQuery}
+              onChange={(event) => {
+                setSearchQuery(event.target.value);
+                setCurrentPage(1);
+              }}
+              className="h-11 rounded-xl pl-9"
+            />
+          </div>
+
+          {/* Sorting */}
+          <div className="flex items-center gap-3 lg:w-64">
+            <ArrowUpDown className="size-4 shrink-0 text-muted-foreground" />
+
+            <select
+              id="assessment-sort"
+              aria-label="Sort assessments"
+              value={sortBy}
+              onChange={(event) => {
+                setSortBy(event.target.value as typeof sortBy);
+                setCurrentPage(1);
+              }}
+              className="h-11 w-full rounded-xl border border-input bg-background px-3 text-sm text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            >
+              <option value="newest">Newest First</option>
+              <option value="price-low">Price: Low to High</option>
+              <option value="price-high">Price: High to Low</option>
+              <option value="duration">Shortest Duration</option>
+            </select>
+          </div>
         </div>
 
-        <div className="flex w-full items-center gap-3 sm:w-auto">
-          <ArrowUpDown className="hidden size-4 text-muted-foreground sm:block" />
+        {/* Three functional filters */}
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {/* Price filter */}
+          <div className="space-y-1.5">
+            <label
+              htmlFor="assessment-price-filter"
+              className="text-sm font-medium text-foreground"
+            >
+              Price
+            </label>
 
-          <label
-            htmlFor="assessment-sort"
-            className="shrink-0 text-sm font-medium text-muted-foreground"
-          >
-            Sort by
-          </label>
+            <select
+              id="assessment-price-filter"
+              value={priceFilter}
+              onChange={(event) => {
+                setPriceFilter(event.target.value as typeof priceFilter);
+                setCurrentPage(1);
+              }}
+              className="h-11 w-full rounded-xl border border-input bg-background px-3 text-sm text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            >
+              <option value="all">All prices</option>
+              <option value="free">Free only</option>
+              <option value="paid">Paid only</option>
+            </select>
+          </div>
 
-          <select
-            id="assessment-sort"
-            value={sortBy}
-            onChange={(event) => {
-              setSortBy(event.target.value as typeof sortBy);
-              setCurrentPage(1);
-            }}
-            className="h-11 min-w-0 flex-1 rounded-xl border border-input bg-background px-3 text-sm text-foreground shadow-sm outline-none transition-colors focus-visible:ring-2 focus-visible:ring-ring sm:w-56 sm:flex-none"
-          >
-            <option value="newest">Newest First</option>
-            <option value="price-low">Price: Low to High</option>
-            <option value="price-high">Price: High to Low</option>
-            <option value="duration">Shortest Duration</option>
-          </select>
+          {/* Duration filter */}
+          <div className="space-y-1.5">
+            <label
+              htmlFor="assessment-duration-filter"
+              className="text-sm font-medium text-foreground"
+            >
+              Duration
+            </label>
+
+            <select
+              id="assessment-duration-filter"
+              value={durationFilter}
+              onChange={(event) => {
+                setDurationFilter(event.target.value as typeof durationFilter);
+                setCurrentPage(1);
+              }}
+              className="h-11 w-full rounded-xl border border-input bg-background px-3 text-sm text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            >
+              <option value="all">Any duration</option>
+              <option value="short">Under 30 minutes</option>
+              <option value="medium">30–60 minutes</option>
+              <option value="long">Over 60 minutes</option>
+            </select>
+          </div>
+
+          {/* Date filter */}
+          <div className="space-y-1.5">
+            <label
+              htmlFor="assessment-date-filter"
+              className="text-sm font-medium text-foreground"
+            >
+              Created date
+            </label>
+
+            <select
+              id="assessment-date-filter"
+              value={dateFilter}
+              onChange={(event) => {
+                setDateFilter(event.target.value as typeof dateFilter);
+                setCurrentPage(1);
+              }}
+              className="h-11 w-full rounded-xl border border-input bg-background px-3 text-sm text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            >
+              <option value="all">Any time</option>
+              <option value="7days">Last 7 days</option>
+              <option value="30days">Last 30 days</option>
+              <option value="90days">Last 90 days</option>
+            </select>
+          </div>
         </div>
+
+        {/* Reset filters */}
+        {(priceFilter !== "all" ||
+          durationFilter !== "all" ||
+          dateFilter !== "all" ||
+          searchQuery !== "" ||
+          sortBy !== "newest") && (
+          <div className="flex flex-wrap items-center justify-between gap-3 border-t border-border/70 pt-3">
+            <p className="text-sm text-muted-foreground">
+              {sortedAssessments.length} matching{" "}
+              {sortedAssessments.length === 1 ? "assessment" : "assessments"}
+            </p>
+
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                setSearchQuery("");
+                setPriceFilter("all");
+                setDurationFilter("all");
+                setDateFilter("all");
+                setSortBy("newest");
+                setCurrentPage(1);
+              }}
+            >
+              Reset filters
+            </Button>
+          </div>
+        )}
       </div>
 
       {/* Results heading */}

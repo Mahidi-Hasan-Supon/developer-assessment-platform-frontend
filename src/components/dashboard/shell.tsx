@@ -8,6 +8,7 @@ import {
 import { ReactNode } from "react";
 import { UserRole } from "@/types";
 import { DashboardSidebar } from "./sidebar";
+import DashboardUserMenu from "./dashboardUserMenu";
 
 export default function DashboardShell({
   children,
@@ -23,6 +24,10 @@ export default function DashboardShell({
       <SidebarInset>
         <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
           <SidebarTrigger className="-ml-1" />
+
+           <DashboardUserMenu role={role} />
+
+
         </header>
 
         {children}

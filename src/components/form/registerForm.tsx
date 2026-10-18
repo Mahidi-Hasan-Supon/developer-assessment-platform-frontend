@@ -301,7 +301,7 @@ const RegisterForm = () => {
                 Creating account...
               </>
             ) : (
-              "Create Account"
+              "Sign Up"
             )}
           </Button>
         </FieldGroup>

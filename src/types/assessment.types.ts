@@ -5,6 +5,14 @@ export type AssessmentStatus =
   | "COMPLETED"
   | "ARCHIVED";
 
+export interface AssessmentCompanyProfile {
+  companyName: string;
+  description: string | null;
+  website: string | null;
+  location: string | null;
+  industry: string | null;
+}
+
 export interface Assessment {
   id: string;
   title: string;
@@ -17,8 +25,11 @@ export interface Assessment {
   companyId: string;
   createdAt: string;
   updatedAt: string;
-}
 
+  company?: {
+    companyProfile?: AssessmentCompanyProfile | null;
+  } | null;
+}
 export interface AssessmentQuery {
   page?: number;
   limit?: number;
