@@ -25,6 +25,9 @@ import {
   ClipboardCheck,
   Info,
   Mail,
+
+  ShieldCheck,
+  BookOpen,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -35,6 +38,8 @@ const routes = [
   { name: "Assessment", url: "/assessments", icon: ClipboardCheck },
   { name: "About us", url: "/about-us", icon: Info },
   { name: "Contact", url: "/contract", icon: Mail },
+{ name: "Blog", url: "/blog", icon: BookOpen },
+{ name: "Privacy Policy", url: "/privacy-policy", icon: ShieldCheck },
 ];
 
 const dashboardRoute: Record<UserRole, string> = {
