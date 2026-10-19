@@ -9,5 +9,6 @@ export * from "./answer.hook"
 export * from "./result.hook"
 export * from "./analytics.hook"
 export * from "./candidate.hook"
+export * from "./ai.hook"
 
 

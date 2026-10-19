@@ -9,12 +9,16 @@ export const adminRoutes = [
         url: adminPrefix,
       },
       {
-        title: "Users-Management",
+        title: "Users Management",
         url: `${adminPrefix}/user`,
       },
       {
         title: "Approve Company",
         url: `${adminPrefix}/approve-company`,
+      },
+      {
+        title: "Assessment Problems",
+        url: `${adminPrefix}/assessment-problems`,
       },
     ],
   },
@@ -25,8 +29,10 @@ export const adminRoutes = [
         title: "Attempts",
         url: `${adminPrefix}/attempts`,
       },
-     
+      {
+        title: "Results Management",
+        url: `${adminPrefix}/results`,
+      },
     ],
   },
- 
 ];

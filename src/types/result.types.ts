@@ -78,7 +78,15 @@ export interface CompanyResultsMeta {
   totalPage?: number;
 }
 
+export interface AdminResultsQuery {
+  page?: number;
+  limit?: number;
+  searchTerm?: string;
+}
 
-
-
-
+export interface AdminResultsMeta {
+  page: number;
+  limit: number;
+  total: number;
+  totalPages: number;
+}

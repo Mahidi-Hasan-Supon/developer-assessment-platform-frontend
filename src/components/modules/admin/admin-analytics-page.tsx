@@ -18,6 +18,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { useAdminAnalytics } from "@/hook/analytics.hook";
 import CompanyOverviewSkeleton from "../company/company-analytics-loadin";
+import AdminAnalyticsChart from "./admin-analytics-chart";
 
 export default function AdminOverviewPage() {
   const {
@@ -205,6 +206,8 @@ export default function AdminOverviewPage() {
           );
         })}
       </div>
+
+      <AdminAnalyticsChart analytics={analytics} />
 
       {/* Platform Performance */}
       <section className="space-y-6 rounded-xl border bg-card p-5 sm:p-6">

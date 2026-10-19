@@ -70,17 +70,17 @@ export const candidateRoutes = [
     ],
   },
   {
-    title:"Assessments",
-    items:[
+    title: "Assessments",
+    items: [
       {
-        title:"Available Assessment",
-        url:`/assessments`
+        title: "Available Assessment",
+        url: `/assessments`,
       },
       {
-        title:"Invitations",
-        url:`${candidatePrefix}/invitations`
-      }
-    ]
+        title: "Invitations",
+        url: `${candidatePrefix}/invitations`,
+      },
+    ],
   },
   {
     title: "My Activity",
@@ -90,12 +90,21 @@ export const candidateRoutes = [
       //   url:`${candidatePrefix}/attempt`
       // },
       {
-        title:"My submission",
-        url:`${candidatePrefix}/my-submissions`
+        title: "My submission",
+        url: `${candidatePrefix}/my-submissions`,
       },
       {
         title: "My Results",
         url: `${candidatePrefix}/results`,
+      },
+    ],
+  },
+  {
+    title: "AI Tools",
+    items: [
+      {
+        title: "AI Assistant",
+        url: `${candidatePrefix}/ai-assistant`,
       },
     ],
   },

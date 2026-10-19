@@ -1,6 +1,13 @@
 import apiClient from "@/lib/apiClient";
 import type { ApiResponse } from "@/types";
-import type { CompanyResultItem, CompanyResultsMeta, CompanyResultsQuery, ResultItem } from "@/types/result.types";
+import type {
+  AdminResultsMeta,
+  AdminResultsQuery,
+  CompanyResultItem,
+  CompanyResultsMeta,
+  CompanyResultsQuery,
+  ResultItem,
+} from "@/types/result.types";
 
 export function getMyResults() {
   return apiClient<ApiResponse<ResultItem[]>>("/result/my", {
@@ -37,9 +44,19 @@ type CompanyResultsResponse = ApiResponse<CompanyResultItem[]> & {
   meta?: CompanyResultsMeta;
 };
 
-export function getCompanyResults(params?: CompanyResultsQuery
-) {
+export function getCompanyResults(params?: CompanyResultsQuery) {
   return apiClient<CompanyResultsResponse>("/result/company/results", {
+    method: "GET",
+    query: params,
+  });
+}
+
+type AdminResultsResponse = ApiResponse<CompanyResultItem[]> & {
+  meta?: AdminResultsMeta;
+};
+
+export function getAdminResults(params?: AdminResultsQuery) {
+  return apiClient<AdminResultsResponse>("/result/admin/results", {
     method: "GET",
     query: params,
   });

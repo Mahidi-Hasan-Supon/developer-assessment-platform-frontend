@@ -17,6 +17,8 @@ import {
 
 import { useCompanyAnalytics } from "@/hook/analytics.hook";
 import CompanyOverviewSkeleton from "./company-analytics-loadin";
+import { Button } from "@/components/ui/button";
+import CompanyAnalyticsChart from "./company-analytics-charts";
 
 const stats = [
   {
@@ -105,13 +107,13 @@ export default function CompanyOverviewPage() {
         <p className="text-sm text-muted-foreground">
           Please check your connection and try again.
         </p>
-        <button
+        <Button
           onClick={() => refetch()}
           className="inline-flex items-center gap-2 rounded-md border px-4 py-2 text-sm"
         >
           <RefreshCw className="h-4 w-4" />
           Retry
-        </button>
+        </Button>
       </div>
     );
   }
@@ -142,13 +144,13 @@ export default function CompanyOverviewPage() {
           </p>
         </div>
 
-        <button
+        <Button
           onClick={() => refetch()}
           className="inline-flex items-center gap-2 rounded-md border px-3 py-2 text-sm transition-colors hover:bg-muted"
         >
           <RefreshCw className="h-4 w-4" />
           Refresh
-        </button>
+        </Button>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
@@ -211,6 +213,7 @@ export default function CompanyOverviewPage() {
             </div>
           </div>
 
+
           <div>
             <div className="mb-2 flex justify-between text-sm">
               <span className="text-muted-foreground">Candidate Pass Rate</span>
@@ -229,6 +232,8 @@ export default function CompanyOverviewPage() {
           </div>
         </div>
       </div>
+      {/* Company Analytics Chart */}
+      <CompanyAnalyticsChart analytics={analytics} />
     </div>
   );
 }

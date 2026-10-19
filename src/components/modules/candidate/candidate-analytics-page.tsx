@@ -5,6 +5,7 @@ import { RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useCandidateAnalytics } from "@/hook/analytics.hook";
 import CompanyOverviewSkeleton from "../company/company-analytics-loadin";
+import CandidateAnalyticsChart from "./candidate-analytics-chart";
 
 export default function CandidateOverviewPage() {
   const {
@@ -124,6 +125,9 @@ export default function CandidateOverviewPage() {
           </div>
         ))}
       </div>
+
+      {/* Performance Chart */}
+      {analytics && <CandidateAnalyticsChart analytics={analytics} />}
 
       {/* Performance */}
       <section className="space-y-6 rounded-xl border bg-card p-5 sm:p-6">
