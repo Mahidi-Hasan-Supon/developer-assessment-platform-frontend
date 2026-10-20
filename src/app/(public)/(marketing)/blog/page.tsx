@@ -4,7 +4,6 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import {
   ArrowRight,
-  BookOpen,
   CalendarDays,
   Clock3,
   Search,
@@ -22,7 +21,6 @@ const articles = [
     readTime: "6 min read",
     author: "DevAssess Team",
     initials: "DA",
-    gradient: "from-blue-500/20 to-cyan-500/10",
     featured: true,
   },
   {
@@ -35,7 +33,6 @@ const articles = [
     readTime: "8 min read",
     author: "DevAssess Team",
     initials: "DA",
-    gradient: "from-emerald-500/20 to-teal-500/10",
     featured: false,
   },
   {
@@ -48,7 +45,6 @@ const articles = [
     readTime: "5 min read",
     author: "DevAssess Team",
     initials: "DA",
-    gradient: "from-violet-500/20 to-indigo-500/10",
     featured: false,
   },
   {
@@ -61,7 +57,6 @@ const articles = [
     readTime: "7 min read",
     author: "DevAssess Team",
     initials: "DA",
-    gradient: "from-orange-500/20 to-amber-500/10",
     featured: false,
   },
   {
@@ -74,7 +69,6 @@ const articles = [
     readTime: "6 min read",
     author: "DevAssess Team",
     initials: "DA",
-    gradient: "from-sky-500/20 to-blue-500/10",
     featured: false,
   },
   {
@@ -87,7 +81,6 @@ const articles = [
     readTime: "5 min read",
     author: "DevAssess Team",
     initials: "DA",
-    gradient: "from-pink-500/20 to-rose-500/10",
     featured: false,
   },
 ];
@@ -163,55 +156,47 @@ export default function Blog() {
       {/* Featured article */}
       {featuredArticle && activeCategory === "All" && !search.trim() && (
         <section className="mx-auto max-w-7xl px-4 pt-12 sm:px-6 lg:px-8 lg:pt-16">
-          <div className="grid overflow-hidden rounded-3xl border border-border bg-card lg:grid-cols-2">
-            <div
-              className={`flex min-h-64 items-center justify-center bg-gradient-to-br ${featuredArticle.gradient} p-8 sm:p-12`}
-            >
-              <div className="flex h-36 w-36 items-center justify-center rounded-[2rem] border border-white/20 bg-background/60 shadow-xl backdrop-blur">
-                <BookOpen
-                  className="h-16 w-16 text-primary"
-                  strokeWidth={1.4}
-                />
-              </div>
-            </div>
-
-            <div className="flex flex-col justify-center p-6 sm:p-10 lg:p-12">
-              <span className="w-fit rounded-full bg-primary/10 px-3 py-1.5 text-xs font-semibold text-primary">
+          <div className="overflow-hidden rounded-3xl border border-border bg-card p-6 sm:p-10 lg:p-12">
+            <div className="flex items-center gap-3">
+              <span className="rounded-full bg-primary/10 px-3 py-1.5 text-xs font-semibold text-primary">
                 Featured article
               </span>
-
-              <h2 className="mt-5 text-2xl font-bold leading-tight sm:text-3xl">
-                {featuredArticle.title}
-              </h2>
-
-              <p className="mt-4 leading-7 text-muted-foreground">
-                {featuredArticle.description}
-              </p>
-
-              <div className="mt-6 flex flex-wrap items-center gap-4 text-xs text-muted-foreground">
-                <span className="inline-flex items-center gap-2">
-                  <CalendarDays className="h-4 w-4" />
-                  {featuredArticle.date}
-                </span>
-                <span className="inline-flex items-center gap-2">
-                  <Clock3 className="h-4 w-4" />
-                  {featuredArticle.readTime}
-                </span>
-              </div>
-
-              <Link
-                href="/assessments"
-                className="mt-7 inline-flex w-fit items-center gap-2 rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground transition hover:opacity-90"
-              >
-                Explore assessments
-                <ArrowRight className="h-4 w-4" />
-              </Link>
+              <span className="rounded-full border border-border bg-muted/50 px-3 py-1 text-xs font-medium text-muted-foreground">
+                {featuredArticle.category}
+              </span>
             </div>
+
+            <h2 className="mt-5 text-2xl font-bold leading-tight sm:text-3xl lg:text-4xl">
+              {featuredArticle.title}
+            </h2>
+
+            <p className="mt-4 max-w-3xl leading-7 text-muted-foreground">
+              {featuredArticle.description}
+            </p>
+
+            <div className="mt-6 flex flex-wrap items-center gap-4 text-xs text-muted-foreground">
+              <span className="inline-flex items-center gap-2">
+                <CalendarDays className="h-4 w-4" />
+                {featuredArticle.date}
+              </span>
+              <span className="inline-flex items-center gap-2">
+                <Clock3 className="h-4 w-4" />
+                {featuredArticle.readTime}
+              </span>
+            </div>
+
+            <Link
+              href="/assessments"
+              className="mt-7 inline-flex w-fit items-center gap-2 rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground transition hover:opacity-90"
+            >
+              Explore assessments
+              <ArrowRight className="h-4 w-4" />
+            </Link>
           </div>
         </section>
       )}
 
-      {/* Articles */}
+      {/* Articles Grid */}
       <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8">
         <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
           <div>
@@ -232,6 +217,7 @@ export default function Blog() {
           </p>
         </div>
 
+        {/* Categories */}
         <div className="mt-7 flex flex-wrap gap-2">
           {categories.map((category) => {
             const isActive = activeCategory === category;
@@ -254,6 +240,7 @@ export default function Blog() {
           })}
         </div>
 
+        {/* Article list */}
         {filteredArticles.length > 0 ? (
           <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {filteredArticles.map((article) => (
@@ -261,22 +248,14 @@ export default function Blog() {
                 key={article.id}
                 className="group flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-card transition duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-lg"
               >
-                <div
-                  className={`relative flex h-48 items-center justify-center bg-gradient-to-br ${article.gradient}`}
-                >
-                  <div className="flex h-20 w-20 items-center justify-center rounded-2xl border border-white/20 bg-background/60 shadow-sm backdrop-blur transition-transform duration-300 group-hover:scale-105">
-                    <BookOpen
-                      className="h-9 w-9 text-primary"
-                      strokeWidth={1.5}
-                    />
+                <div className="flex flex-1 flex-col p-6">
+                  {/* Category Badge */}
+                  <div className="mb-4">
+                    <span className="rounded-full border border-border bg-muted/50 px-3 py-1 text-xs font-medium text-muted-foreground">
+                      {article.category}
+                    </span>
                   </div>
 
-                  <span className="absolute left-4 top-4 rounded-full border border-border/50 bg-background/85 px-3 py-1.5 text-xs font-semibold backdrop-blur">
-                    {article.category}
-                  </span>
-                </div>
-
-                <div className="flex flex-1 flex-col p-5">
                   <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-muted-foreground">
                     <span className="inline-flex items-center gap-1.5">
                       <CalendarDays className="h-3.5 w-3.5" />
@@ -288,7 +267,7 @@ export default function Blog() {
                     </span>
                   </div>
 
-                  <h3 className="mt-4 text-lg font-bold leading-7 transition-colors group-hover:text-primary">
+                  <h3 className="mt-3 text-lg font-bold leading-7 transition-colors group-hover:text-primary">
                     {article.title}
                   </h3>
 
@@ -338,7 +317,7 @@ export default function Blog() {
           </div>
         )}
 
-        {/* CTA */}
+        {/* Call to Action */}
         <div className="relative mt-16 overflow-hidden rounded-3xl border border-primary/20 bg-primary/5 p-7 sm:p-10 lg:p-12">
           <div className="pointer-events-none absolute -right-10 -top-16 h-48 w-48 rounded-full bg-emerald-500/10 blur-3xl" />
 
