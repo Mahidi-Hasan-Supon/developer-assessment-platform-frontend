@@ -24,8 +24,7 @@ import {
   House,
   ClipboardCheck,
   Info,
-  Mail,
-
+  Mail,   
   ShieldCheck,
   BookOpen,
 } from "lucide-react";
@@ -38,8 +37,8 @@ const routes = [
   { name: "Assessment", url: "/assessments", icon: ClipboardCheck },
   { name: "About us", url: "/about-us", icon: Info },
   { name: "Contact", url: "/contract", icon: Mail },
-{ name: "Blog", url: "/blog", icon: BookOpen },
-{ name: "Privacy Policy", url: "/privacy-policy", icon: ShieldCheck },
+  { name: "Blog", url: "/blog", icon: BookOpen },
+  { name: "Privacy Policy", url: "/privacy-policy", icon: ShieldCheck },
 ];
 
 const dashboardRoute: Record<UserRole, string> = {
@@ -70,18 +69,43 @@ const Header = () => {
   const user = data?.data;
   const role = user?.role as UserRole | undefined;
 
+  // const handleLogout = () => {
+  //   logout(undefined, {
+  //     onSuccess: () => {
+  //       queryClient.removeQueries({ queryKey: ["user"] });
+
+  //       toast.add({
+  //         title: "Logged out",
+  //         description: "You have logged out successfully.",
+  //         type: "success",
+  //       });
+  //     },
+  //     onError: (err) => {
+  //       toast.add({
+  //         title: "Logout failed",
+  //         description: err.message || "Something went wrong. Please try again.",
+  //         type: "error",
+  //       });
+  //     },
+  //   });
+  // };
+
   const handleLogout = () => {
     logout(undefined, {
       onSuccess: () => {
-        queryClient.removeQueries({ queryKey: ["user"] });
+        // Query cache clear kore diben
+        queryClient.clear();
 
         toast.add({
           title: "Logged out",
           description: "You have logged out successfully.",
           type: "success",
         });
+
+        // 👈 Etata add kore din: Instant hard reload & redirect to login
+        window.location.href = "/login";
       },
-      onError: (err) => {
+      onError: (err: any) => {
         toast.add({
           title: "Logout failed",
           description: err.message || "Something went wrong. Please try again.",

@@ -540,7 +540,8 @@ export default function LoginForm() {
               type: "success",
             });
 
-            router.push("/");
+            // router.push("/");
+            window.location.href = "/";
           },
           onError: (err: any) => {
             const message =

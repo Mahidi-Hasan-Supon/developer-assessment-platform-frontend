@@ -34,10 +34,21 @@ export const useResendVerificationOtp = () => {
 };
 
 export const useLogin = () => {
+  const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: loginUser,
+    onSuccess: (data) => {
+      // 1. User query ke invalidate koren jate getMe abar call hoye fresh data niye ashe
+      queryClient.invalidateQueries({ queryKey: ["user"] });
+    },
   });
 };
+// export const useLogin = () => {
+//   return useMutation({
+//     mutationFn: loginUser,
+//   });
+// };
 
 export const useGetMe = () => {
   return useQuery({
@@ -66,7 +77,6 @@ export const useForgotPassword = () => {
   });
 };
 
-
 export const useResetPassword = () => {
   return useMutation({
     mutationFn: resetPasswordUser,
@@ -75,12 +85,8 @@ export const useResetPassword = () => {
 
 // useResendForgotPasswordOtp.ts
 
-
 export const useResendForgotPasswordOtp = () => {
   return useMutation({
     mutationFn: resendForgotPasswordOtp,
   });
 };
-
-
-
