@@ -69,43 +69,18 @@ const Header = () => {
   const user = data?.data;
   const role = user?.role as UserRole | undefined;
 
-  // const handleLogout = () => {
-  //   logout(undefined, {
-  //     onSuccess: () => {
-  //       queryClient.removeQueries({ queryKey: ["user"] });
-
-  //       toast.add({
-  //         title: "Logged out",
-  //         description: "You have logged out successfully.",
-  //         type: "success",
-  //       });
-  //     },
-  //     onError: (err) => {
-  //       toast.add({
-  //         title: "Logout failed",
-  //         description: err.message || "Something went wrong. Please try again.",
-  //         type: "error",
-  //       });
-  //     },
-  //   });
-  // };
-
   const handleLogout = () => {
     logout(undefined, {
       onSuccess: () => {
-        // Query cache clear kore diben
-        queryClient.clear();
+        queryClient.removeQueries({ queryKey: ["user"] });
 
         toast.add({
           title: "Logged out",
           description: "You have logged out successfully.",
           type: "success",
         });
-
-        // 👈 Etata add kore din: Instant hard reload & redirect to login
-        window.location.href = "/login";
       },
-      onError: (err: any) => {
+      onError: (err) => {
         toast.add({
           title: "Logout failed",
           description: err.message || "Something went wrong. Please try again.",
@@ -114,6 +89,31 @@ const Header = () => {
       },
     });
   };
+
+  // const handleLogout = () => {
+  //   logout(undefined, {
+  //     onSuccess: () => {
+  //       // Query cache clear kore diben
+  //       queryClient.clear();
+
+  //       toast.add({
+  //         title: "Logged out",
+  //         description: "You have logged out successfully.",
+  //         type: "success",
+  //       });
+
+  //       // 👈 Etata add kore din: Instant hard reload & redirect to login
+  //       window.location.href = "/login";
+  //     },
+  //     onError: (err: any) => {
+  //       toast.add({
+  //         title: "Logout failed",
+  //         description: err.message || "Something went wrong. Please try again.",
+  //         type: "error",
+  //       });
+  //     },
+  //   });
+  // };
 
   const initial = user?.name?.trim()?.charAt(0)?.toUpperCase() || "U";
 
